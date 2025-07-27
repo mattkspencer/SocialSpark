@@ -1,0 +1,145 @@
+# Fix "View Calendar" Button to Match "Create AI Content" Button Visibility
+
+## Problem Identified
+The "View Calendar" button is coded to be WHITE (invisible) by default and only shows blue text on hover. This is backwards - it should be VISIBLE by default like the "Create AI Content" button.
+
+## Solution: Copy the Working Pattern
+
+### Step 1: Find the Working "Create AI Content" Button
+First, look at how the "Create AI Content" button is coded correctly:
+
+```typescript
+// In client/src/pages/Dashboard.tsx - Find the working button that looks like:
+<Link
+  to="/content"
+  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-sm"
+>
+  <Plus className="h-5 w-5 inline mr-2" />
+  Create Content
+</Link>
+```
+
+### Step 2: Find the Broken "View Calendar" Button
+Look for the problematic button that probably looks like:
+
+```typescript
+// Current broken button (invisible by default):
+<Link
+  to="/calendar"
+  className="text-white hover:text-blue-600 ..."  // WHITE by default = invisible!
+>
+  View Full Calendar
+</Link>
+```
+
+### Step 3: Apply the Same Pattern
+Fix the "View Calendar" button to follow the same successful pattern as "Create AI Content":
+
+**Option A: Make it a Blue Button (Recommended)**
+```typescript
+// Make it match the Create AI Content button style:
+<Link
+  to="/calendar"
+  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+>
+  View Full Calendar
+</Link>
+```
+
+**Option B: Make it a Blue Text Link**
+```typescript
+// Or make it a visible blue text link:
+<Link
+  to="/calendar"
+  className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+>
+  View Full Calendar
+</Link>
+```
+
+### Step 4: Find All Similar Broken Buttons
+Look for ANY other buttons that have `text-white` as the default state and fix them all:
+
+```bash
+# Search for problematic patterns:
+grep -n "text-white hover:text-" client/src/pages/Dashboard.tsx
+```
+
+### Step 5: Complete Dashboard Button Fix
+Here's the full section that needs fixing:
+
+```typescript
+// In the "Upcoming Content" section - Fix the header button:
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-900">Upcoming Content</h2>
+    {/* FIX THIS BUTTON - Make it visible by default */}
+    <Link
+      to="/calendar"
+      className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+    >
+      View Full Calendar
+    </Link>
+  </div>
+  
+  <div className="text-center py-8">
+    <div className="text-gray-400 mb-4">
+      <Calendar className="h-12 w-12 mx-auto" />
+    </div>
+    <p className="text-gray-600 mb-4">No scheduled content yet.</p>
+    {/* This button should also follow the same pattern as Create AI Content */}
+    <Link
+      to="/calendar"
+      className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+    >
+      Schedule Content
+    </Link>
+  </div>
+</div>
+```
+
+## The Key Pattern to Follow
+
+**Correct Pattern (like "Create AI Content"):**
+- Default state: VISIBLE (blue background with white text, or blue text on white background)
+- Hover state: Slightly different shade for feedback
+
+**Wrong Pattern (current "View Calendar"):**
+- Default state: INVISIBLE (white text on white background)
+- Hover state: Becomes visible
+
+## Debugging Steps
+
+1. **Compare side-by-side**:
+   - Look at "Create AI Content" button CSS classes
+   - Look at "View Calendar" button CSS classes
+   - They should follow the same pattern
+
+2. **Check for these problematic patterns**:
+   ```css
+   text-white hover:text-blue-600  /* WRONG - invisible by default */
+   text-transparent hover:text-blue-600  /* WRONG - invisible by default */
+   opacity-0 hover:opacity-100  /* WRONG - invisible by default */
+   ```
+
+3. **Replace with working patterns**:
+   ```css
+   text-blue-600 hover:text-blue-700  /* RIGHT - visible by default */
+   bg-blue-600 hover:bg-blue-700 text-white  /* RIGHT - visible by default */
+   ```
+
+## Test Results Required
+
+After making changes, verify:
+1. **Before hover**: "View Calendar" text should be clearly visible (blue)
+2. **On hover**: Text should get slightly darker or background should change
+3. **Matches pattern**: Should follow the same visual pattern as "Create AI Content"
+
+## Expected Final State
+
+Both buttons should work the same way:
+- ✅ "Create AI Content" - Blue background, white text, visible by default
+- ✅ "View Calendar" - Blue text or blue background, visible by default
+- ✅ Both have proper hover states for user feedback
+
+The fix is simple: make the default state visible instead of invisible, just like the working button already does.

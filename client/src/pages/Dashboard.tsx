@@ -154,12 +154,12 @@ export default function Dashboard() {
       <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
-          <button
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-sm px-3 py-1 rounded-md hover:bg-blue-50"
+          <Button
             onClick={() => navigate("/analytics")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md text-sm px-4 py-2"
           >
             View All
-          </button>
+          </Button>
         </div>
 
         {!recentPosts || (recentPosts as any[]).length === 0 ? (
@@ -220,13 +220,13 @@ export default function Dashboard() {
       <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Upcoming Content</h2>
-          <button
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors text-sm px-3 py-1 rounded-md hover:bg-blue-50"
+          <Button
             onClick={() => navigate("/calendar")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md text-sm px-4 py-2"
           >
-            <i className="fas fa-calendar-alt mr-1"></i>
+            <i className="fas fa-calendar-alt mr-2"></i>
             View Full Calendar
-          </button>
+          </Button>
         </div>
 
         {!scheduledPosts || (scheduledPosts as any[]).length === 0 ? (
