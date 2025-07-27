@@ -8,16 +8,16 @@ interface MetricCardProps {
 
 export default function MetricCard({ title, value, trend, icon, color = 'primary' }: MetricCardProps) {
   const colorClasses = {
-    primary: 'bg-primary-50 text-primary-600',
-    success: 'bg-green-50 text-success',
-    warning: 'bg-orange-50 text-warning',
-    error: 'bg-red-50 text-error',
+    primary: 'bg-blue-50 text-blue-600',
+    success: 'bg-green-50 text-green-600',
+    warning: 'bg-orange-50 text-orange-600',
+    error: 'bg-red-50 text-red-600',
   };
 
   const getTrendColor = (trend?: string) => {
     if (!trend) return '';
-    if (trend.startsWith('+')) return 'text-success';
-    if (trend.startsWith('-')) return 'text-error';
+    if (trend.startsWith('+')) return 'text-green-600';
+    if (trend.startsWith('-')) return 'text-red-600';
     return 'text-gray-600';
   };
 

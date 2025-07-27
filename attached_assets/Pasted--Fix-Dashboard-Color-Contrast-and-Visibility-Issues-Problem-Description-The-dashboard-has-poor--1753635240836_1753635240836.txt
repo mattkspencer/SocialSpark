@@ -1,0 +1,194 @@
+# Fix Dashboard Color Contrast and Visibility Issues
+
+## Problem Description
+The dashboard has poor color contrast making text and buttons hard to see:
+1. **Welcome message** is barely visible against the background
+2. **Buttons** blend into the background making them hard to read
+3. **Text elements** have insufficient contrast
+4. **Overall readability** is compromised due to color scheme issues
+
+## Solution: Improve Color Contrast and Readability
+
+### Update Dashboard Component
+Fix the color scheme in `client/src/pages/Dashboard.tsx` to improve visibility:
+
+```typescript
+// In client/src/pages/Dashboard.tsx - Update with better contrast:
+import React from 'react';
+import { Plus, TrendingUp, Calendar, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+const Dashboard = () => {
+  const { user } = useAuth();
+
+  return (
+    <div className="space-y-6">
+      {/* Welcome Section - Better contrast */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Welcome back, {user?.first_name || 'there'}!
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Ready to create amazing content for your business?
+            </p>
+          </div>
+          <Link
+            to="/content"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-sm"
+          >
+            <Plus className="h-5 w-5 inline mr-2" />
+            Create Content
+          </Link>
+        </div>
+      </div>
+
+      {/* Stats Cards - Improved visibility */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Posts This Month */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-blue-600" />
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Posts This Month</p>
+              <p className="text-2xl font-bold text-gray-900">0</p>
+              <p className="text-sm text-gray-500">0% vs last month</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Reach */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <Users className="h-5 w-5 text-green-600" />
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Total Reach</p>
+              <p className="text-2xl font-bold text-gray-900">0</p>
+              <p className="text-sm text-gray-500">This month</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Engagement Rate */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-purple-600" />
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Engagement Rate</p>
+              <p className="text-2xl font-bold text-gray-900">0%</p>
+              <p className="text-sm text-gray-500">Average</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Scheduled Posts */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-orange-600" />
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">Scheduled Posts</p>
+              <p className="text-2xl font-bold text-gray-900">0</p>
+              <p className="text-sm text-gray-500">Next 7 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions - Enhanced contrast */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          {/* Create AI Content */}
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+              <Plus className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Create AI Content</h3>
+            <p className="text-gray-700 mb-4 text-sm">
+              Generate engaging posts with AI tailored to your business
+            </p>
+            <Link
+              to="/content"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Get Started
+            </Link>
+            <p className="text-blue-700 text-xs mt-2 font-medium">Average time: 2 minutes</p>
+          </div>
+
+          {/* Faceless Video */}
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+            <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
+              <Calendar className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Faceless Video</h3>
+            <p className="text-gray-700 mb-4 text-sm">
+              Create video content scripts without showing your face
+            </p>
+            <Link
+              to="/content"
+              className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Create Video
+            </Link>
+            <p className="text-green-700 text-xs mt-2 font-medium">Average time: 5 minutes</p>
+          </div>
+
+          {/* Schedule Posts */}
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+            <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
+              <Calendar className="h-6 w-6 text-white" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Schedule Posts</h3>
+            <p className="text-gray-700 mb-4 text-sm">
+              Plan your content calendar and automate posting
+            </p>
+            <Link
+              to="/calendar"
+              className="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Open Calendar
+            </Link>
+            <p className="text-purple-700 text-xs mt-2 font-medium">0 posts scheduled</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <Link
+            to="/analytics"
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+          >
+            View All
+          </Link>
+        </div>
+        <div className="text-center py-8">
+          <div className="text-gray-400 mb-4">
+            <TrendingUp className="h-12 w-12 mx-auto" />
+          </div>
+          <p className="text-gray-600 mb-4">No posts yet. Create your first AI-generated content!</p>
+          <Link
+            to="/content"
+            className="inline

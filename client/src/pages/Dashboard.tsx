@@ -61,16 +61,16 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome Header */}
-      <section className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-8 text-white relative overflow-hidden">
+      <section className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-8 text-white relative overflow-hidden shadow-lg">
         <div className="relative z-10">
-          <h1 className="text-3xl font-bold mb-2">
+          <h1 className="text-3xl font-bold mb-2 text-white">
             Welcome back, {user?.businessName || user?.firstName || 'there'}!
           </h1>
-          <p className="text-primary-100 text-lg">Ready to create engaging content today?</p>
-          <div className="mt-6 flex space-x-4">
+          <p className="text-blue-100 text-lg">Ready to create engaging content today?</p>
+          <div className="mt-6 flex flex-wrap gap-4">
             <Button
               onClick={() => navigate("/create")}
-              className="bg-white text-primary-600 hover:bg-gray-50"
+              className="bg-white text-blue-700 hover:bg-gray-50 font-semibold shadow-md"
             >
               <i className="fas fa-magic mr-2"></i>
               Create AI Content
@@ -78,14 +78,14 @@ export default function Dashboard() {
             <Button
               onClick={() => navigate("/calendar")}
               variant="outline"
-              className="border-primary-300 text-white hover:bg-primary-700"
+              className="border-2 border-white text-white hover:bg-white hover:text-blue-700 font-semibold"
             >
               <i className="fas fa-calendar mr-2"></i>
               View Calendar
             </Button>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-32 -translate-y-32"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full transform translate-x-32 -translate-y-32"></div>
       </section>
 
       {/* Key Metrics */}
@@ -164,12 +164,12 @@ export default function Dashboard() {
         </div>
 
         {!recentPosts || (recentPosts as any[]).length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <i className="fas fa-inbox text-4xl mb-4 text-gray-300"></i>
-            <p>No posts yet. Create your first AI-generated content!</p>
+          <div className="text-center py-8">
+            <i className="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
+            <p className="text-gray-600 mb-4 text-lg">No posts yet. Create your first AI-generated content!</p>
             <Button
               onClick={() => navigate("/create")}
-              className="mt-4 bg-primary-500 hover:bg-primary-600"
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md"
             >
               Create Content
             </Button>
@@ -177,10 +177,10 @@ export default function Dashboard() {
         ) : (
           <div className="space-y-4">
             {(recentPosts as any[]).slice(0, 3).map((post: any) => (
-              <div key={post.id} className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50">
+              <div key={post.id} className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  post.status === 'published' ? 'bg-success' : 
-                  post.status === 'scheduled' ? 'bg-warning' : 'bg-primary-500'
+                  post.status === 'published' ? 'bg-green-600' : 
+                  post.status === 'scheduled' ? 'bg-orange-600' : 'bg-blue-600'
                 }`}>
                   <i className={`text-white ${
                     post.status === 'published' ? 'fas fa-check' :

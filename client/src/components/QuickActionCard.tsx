@@ -28,18 +28,18 @@ export default function QuickActionCard({
       case 'warning':
         return 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200';
       default:
-        return 'bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200';
+        return 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200';
     }
   };
 
   const getIconBgClass = () => {
     switch (color) {
       case 'success':
-        return 'bg-success';
+        return 'bg-green-600';
       case 'warning':
-        return 'bg-warning';
+        return 'bg-orange-600';
       default:
-        return 'bg-primary-500';
+        return 'bg-blue-600';
     }
   };
 
@@ -50,7 +50,7 @@ export default function QuickActionCard({
       case 'warning':
         return 'text-orange-900';
       default:
-        return 'text-primary-900';
+        return 'text-gray-900';
     }
   };
 
@@ -61,18 +61,18 @@ export default function QuickActionCard({
       case 'warning':
         return 'text-orange-700';
       default:
-        return 'text-primary-700';
+        return 'text-gray-700';
     }
   };
 
   const getArrowColorClass = () => {
     switch (color) {
       case 'success':
-        return 'text-success';
+        return 'text-green-600';
       case 'warning':
-        return 'text-warning';
+        return 'text-orange-600';
       default:
-        return 'text-primary-500';
+        return 'text-blue-600';
     }
   };
 
@@ -83,7 +83,7 @@ export default function QuickActionCard({
       case 'warning':
         return 'text-orange-600';
       default:
-        return 'text-primary-600';
+        return 'text-blue-600';
     }
   };
 
