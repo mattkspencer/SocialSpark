@@ -16,6 +16,9 @@ export default function Landing() {
   };
 
   const handleLogout = () => {
+    // Clear any cached data and redirect to logout
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/api/logout";
   };
 

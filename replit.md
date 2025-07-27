@@ -115,6 +115,11 @@ Preferred communication style: Simple, everyday language.
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
 ### Recent Changes
+- **2025-01-27**: Fixed stuck loading screen after sign out
+  - Fixed authentication loop causing repeated 401 requests after logout
+  - Updated useAuth hook to properly handle 401 errors without infinite retries
+  - Added proper cache clearing on logout to prevent authentication state issues
+  - Sign out now works smoothly and returns users to homepage without getting stuck
 - **2025-01-27**: Added sticky header to homepage for consistent navigation
   - Homepage now has sticky navigation that remains at top during scrolling
   - Added glass-morphism effect with semi-transparent background and backdrop blur

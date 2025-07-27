@@ -16,6 +16,9 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const handleLogout = () => {
+    // Clear any cached data and redirect to logout
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/api/logout";
   };
 
