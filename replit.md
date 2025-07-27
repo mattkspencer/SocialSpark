@@ -115,6 +115,11 @@ Preferred communication style: Simple, everyday language.
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
 ### Recent Changes
+- **2025-01-27**: Added homepage navigation and fixed sidebar Dashboard link
+  - Added homepage navigation button to Layout header for easy navigation back to landing page
+  - Fixed Dashboard navigation in sidebar (was pointing to "/" instead of "/dashboard")
+  - Added header with logo/brand that serves as homepage navigation button
+  - Users can now navigate back to homepage from any protected page within the app
 - **2025-01-27**: Fixed homepage access to allow all users to view landing page
   - Updated routing logic to make homepage (/) accessible to both authenticated and unauthenticated users
   - Modified Landing page to show context-aware navigation based on authentication status
