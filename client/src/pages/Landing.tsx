@@ -21,33 +21,35 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
-      {/* Header */}
-      <header className="px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-              <i className="fas fa-magic text-white text-lg"></i>
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                <i className="fas fa-magic text-white text-lg"></i>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">SocialAI</h1>
+                <p className="text-xs text-gray-500">AI-Powered Content</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">SocialAI</h1>
-              <p className="text-xs text-gray-500">AI-Powered Content</p>
-            </div>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-700">Welcome, {user?.firstName || user?.email}!</span>
+                <Button onClick={handleDashboard} className="bg-primary-500 hover:bg-primary-600">
+                  Dashboard
+                </Button>
+                <Button onClick={handleLogout} variant="outline">
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={handleLogin} className="bg-primary-500 hover:bg-primary-600">
+                Sign In
+              </Button>
+            )}
           </div>
-          {isAuthenticated ? (
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700">Welcome, {user?.firstName || user?.email}!</span>
-              <Button onClick={handleDashboard} className="bg-primary-500 hover:bg-primary-600">
-                Dashboard
-              </Button>
-              <Button onClick={handleLogout} variant="outline">
-                Sign Out
-              </Button>
-            </div>
-          ) : (
-            <Button onClick={handleLogin} className="bg-primary-500 hover:bg-primary-600">
-              Sign In
-            </Button>
-          )}
         </div>
       </header>
 

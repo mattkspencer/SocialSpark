@@ -1,0 +1,199 @@
+# Add Sticky Header to Homepage (Landing Page)
+
+## Problem Description
+The homepage/landing page doesn't have a sticky header like the dashboard and other protected pages. When users scroll down on the homepage, the navigation disappears, making it difficult to access login/signup buttons or navigate back to the top.
+
+## Solution: Add Sticky Header to Landing Page
+
+The Landing page component needs its own sticky navigation header that stays fixed at the top during scrolling.
+
+### Update Landing Page Component
+Modify `client/src/pages/Landing.tsx` to include a sticky header:
+
+```typescript
+// In client/src/pages/Landing.tsx - Update the navigation section:
+
+import { useAuth } from '../hooks/useAuth';
+import { Link } from 'react-router-dom';
+
+const Landing = () => {
+  const { user } = useAuth();
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Sticky Navigation Bar - stays at top during scroll */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            {/* Left side - Logo/Brand */}
+            <div className="flex items-center">
+              <Link 
+                to="/"
+                className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
+              >
+                SocialAI
+              </Link>
+            </div>
+            
+            {/* Right side - Navigation buttons */}
+            <div className="flex items-center space-x-4">
+              {user ? (
+                // Authenticated user navigation
+                <>
+                  <span className="text-gray-700 text-sm">
+                    Welcome, {user.first_name || user.email}!
+                  </span>
+                  <Link
+                    to="/dashboard"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      window.location.reload();
+                    }}
+                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                // Unauthenticated user navigation
+                <>
+                  <Link
+                    to="/login"
+                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Get Started Free
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Rest of the homepage content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        {/* Hero Section */}
+        <div className="text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            AI-Powered Social Media
+            <span className="text-blue-600 block">Made Simple</span>
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Create engaging content, schedule posts, and grow your business across all social platforms with the power of AI.
+          </p>
+          
+          {user ? (
+            <div className="space-y-4">
+              <p className="text-lg text-gray-700">Ready to create amazing content?</p>
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
+          ) : (
+            <div className="space-x-4">
+              <Link
+                to="/signup"
+                className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+              >
+                Sign In
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-12">
+              Everything You Need to Grow Your Business
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Feature cards */}
+              <div className="p-6 bg-gray-50 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">AI Content Creation</h3>
+                <p className="text-gray-600">Generate engaging posts tailored to your business and audience automatically.</p>
+              </div>
+              <div className="p-6 bg-gray-50 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Cross-Platform Posting</h3>
+                <p className="text-gray-600">Schedule and publish to Facebook, Instagram, and YouTube from one place.</p>
+              </div>
+              <div className="p-6 bg-gray-50 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Analytics & Insights</h3>
+                <p className="text-gray-600">Track performance and optimize your social media strategy with detailed analytics.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Landing;
+```
+
+## Key Changes for Sticky Header
+
+### CSS Classes Added:
+- **`sticky top-0 z-50`** - Makes navigation stick to the top during scrolling
+- **`bg-white/95 backdrop-blur-sm`** - Semi-transparent background with blur effect
+- **`shadow-sm`** - Subtle shadow for visual separation
+
+### Enhanced Features:
+- **Glass-morphism effect** - Slightly transparent background with backdrop blur
+- **Consistent branding** - Same SocialAI logo and styling as dashboard header
+- **Smooth transitions** - Hover effects on all interactive elements
+- **Responsive design** - Works on all screen sizes
+
+## Benefits of Homepage Sticky Header
+
+✅ **Always accessible navigation** - Sign In/Sign Up buttons always visible
+✅ **Consistent UX** - Same sticky behavior as dashboard pages
+✅ **Better conversion** - Users can sign up from anywhere on the page
+✅ **Professional appearance** - Modern glass-morphism design
+✅ **Brand visibility** - SocialAI logo always visible during scroll
+
+## Testing the Implementation
+
+After applying this fix, test:
+
+1. **Homepage scrolling** - Navigation should stick to top when scrolling down
+2. **Authentication states** - Different buttons for logged in vs logged out users
+3. **Button functionality** - All navigation buttons work correctly
+4. **Visual consistency** - Header style matches dashboard header
+5. **Responsive behavior** - Works properly on mobile devices
+
+## Alternative: Simpler Solid Background
+
+If you prefer a solid background instead of the glass effect:
+
+```typescript
+// Replace the nav className with:
+<nav className="sticky top-0 z-50 bg-white shadow-sm">
+```
+
+This provides the same sticky functionality with a solid white background instead of the semi-transparent blur effect.
+
+The sticky header on the homepage will greatly improve user experience by keeping navigation accessible throughout the entire landing page experience.

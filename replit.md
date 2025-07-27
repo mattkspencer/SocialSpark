@@ -115,6 +115,11 @@ Preferred communication style: Simple, everyday language.
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
 ### Recent Changes
+- **2025-01-27**: Added sticky header to homepage for consistent navigation
+  - Homepage now has sticky navigation that remains at top during scrolling
+  - Added glass-morphism effect with semi-transparent background and backdrop blur
+  - Login/signup buttons always accessible throughout homepage experience
+  - Consistent sticky header behavior across all pages (homepage and dashboard)
 - **2025-01-27**: Made header sticky and improved navigation UX
   - Header now remains fixed at top of page during scrolling (sticky positioning)
   - Added z-index to ensure header appears above all page content
