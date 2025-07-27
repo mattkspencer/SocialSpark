@@ -114,6 +114,12 @@ Preferred communication style: Simple, everyday language.
 - **Server Restart**: tsx for TypeScript server execution with file watching
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
+### Recent Changes
+- **2025-01-27**: Fixed home page loading/routing issue that caused brief Landing page flash before redirecting to Dashboard
+  - Separated loading state from authentication logic in App.tsx
+  - Added proper loading spinner during auth verification
+  - Eliminated content flashing by preventing premature route rendering
+
 ### Scalability Considerations
 - **Database**: Connection pooling ready for horizontal scaling
 - **File Storage**: Local storage with cloud migration path prepared

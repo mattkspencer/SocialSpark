@@ -1,0 +1,196 @@
+# Fix Home Page Loading & Routing Issue
+
+## Problem Description
+When refreshing the page in Replit, the home page briefly appears for a split second, then automatically redirects to the dashboard. This creates a poor user experience and prevents proper landing page functionality.
+
+## Investigation Steps
+
+### 1. Check Authentication Flow
+First, examine the authentication logic in the main App component:
+
+```typescript
+// Look for these potential issues in client/src/App.tsx:
+// - Automatic authentication check on page load
+// - Immediate redirect logic after auth verification
+// - Missing loading states that cause premature redirects
+```
+
+**Check for:**
+- `useEffect` hooks that trigger authentication checks immediately
+- Automatic redirects based on stored tokens/session data
+- Missing loading states during auth verification
+
+### 2. Examine Routing Configuration
+Review the routing setup and protected route logic:
+
+```typescript
+// In client/src/App.tsx or routing files, look for:
+// - Default route redirects
+// - Protected route wrappers that redirect unauthenticated users
+// - Route guards that don't respect the current path
+```
+
+**Check for:**
+- Routes with automatic redirects to `/dashboard`
+- Missing public route definitions
+- Incorrect route hierarchy or default routes
+
+### 3. Review Authentication Hook
+Examine the `useAuth` hook for immediate redirects:
+
+```typescript
+// In client/src/hooks/useAuth.ts, check for:
+// - Automatic token validation on mount
+// - Immediate redirect logic
+// - Missing return early patterns for unauthenticated states
+```
+
+## Common Causes & Solutions
+
+### Issue #1: Aggressive Authentication Check
+**Problem:** Auth hook immediately redirects unauthenticated users to dashboard
+**Solution:** Add proper loading states and respect current route
+
+```typescript
+// Fix in useAuth hook:
+const useAuth = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    const checkAuth = async () => {
+      // Don't redirect during initial load
+      setIsLoading(true);
+      try {
+        const userData = await verifyAuth();
+        setUser(userData);
+      } catch (error) {
+        // Don't auto-redirect here - let components decide
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+  
+  return { user, isLoading };
+};
+```
+
+### Issue #2: Incorrect Route Protection
+**Problem:** All routes are protected, forcing redirect to dashboard
+**Solution:** Create proper public/private route separation
+
+```typescript
+// Fix in App.tsx:
+const App = () => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+  
+  return (
+    <Router>
+      <Routes>
+        {/* Public routes - always accessible */}
+        <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
+        <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+        
+        {/* Protected routes - require authentication */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute user={user}>
+            <Layout><Dashboard /></Layout>
+          </ProtectedRoute>
+        } />
+        {/* Other protected routes... */}
+      </Routes>
+    </Router>
+  );
+};
+```
+
+### Issue #3: Missing Loading States
+**Problem:** Components render before auth state is determined
+**Solution:** Add proper loading handling
+
+```typescript
+// Add to main App component:
+const App = () => {
+  const { user, isLoading } = useAuth();
+  
+  // Prevent flash of wrong content
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Rest of routing logic...
+};
+```
+
+## Debugging Steps
+
+### Step 1: Add Console Logs
+Add debugging to track the flow:
+
+```typescript
+// In App.tsx and useAuth.ts, add:
+console.log('Auth state:', { user, isLoading, timestamp: new Date().toISOString() });
+console.log('Current route:', window.location.pathname);
+```
+
+### Step 2: Check Network Tab
+- Open browser DevTools → Network tab
+- Refresh the page
+- Look for authentication API calls that might be triggering redirects
+- Check timing of requests vs. route changes
+
+### Step 3: Check Session Storage
+- Open DevTools → Application tab → Local Storage / Session Storage
+- Look for stored tokens or user data that might trigger auto-login
+- Clear storage and test if behavior changes
+
+## Implementation Tasks
+
+1. **Fix Authentication Flow:**
+   - Add proper loading states to prevent premature redirects
+   - Ensure auth check doesn't auto-redirect from home page
+   - Implement proper route protection logic
+
+2. **Update Routing Logic:**
+   - Define clear public vs. protected routes
+   - Remove automatic dashboard redirects for unauthenticated users
+   - Add proper loading states during auth verification
+
+3. **Test User Flows:**
+   - Unauthenticated user visits home page (should stay on home)
+   - Unauthenticated user tries to access dashboard (redirect to login/home)
+   - Authenticated user visits home page (can redirect to dashboard)
+   - Page refresh maintains correct route behavior
+
+## Expected Behavior After Fix
+
+✅ **Unauthenticated users:** Should see and stay on the home/landing page
+✅ **Authenticated users:** Can be redirected to dashboard from home page  
+✅ **Page refresh:** Should maintain the current route without flickering
+✅ **Protected routes:** Should redirect to login/home when not authenticated
+✅ **Loading states:** Should prevent content flashing during auth checks
+
+## Files to Examine & Modify
+
+1. `client/src/App.tsx` - Main routing and auth logic
+2. `client/src/hooks/useAuth.ts` - Authentication state management  
+3. `client/src/pages/Landing.tsx` - Home page component
+4. `client/src/components/Layout.tsx` - Layout wrapper logic
+5. Any route protection middleware or components
+
+Run the application after each change and test the refresh behavior to ensure the home page loads correctly without unwanted redirects.

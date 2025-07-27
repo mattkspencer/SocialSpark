@@ -16,11 +16,25 @@ import Layout from "@/components/Layout";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  // Show loading spinner during authentication check
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
+      {!isAuthenticated ? (
+        // Public routes for unauthenticated users
         <Route path="/" component={Landing} />
       ) : (
+        // Protected routes for authenticated users
         <Layout>
           <Route path="/" component={Dashboard} />
           <Route path="/create" component={ContentCreator} />
