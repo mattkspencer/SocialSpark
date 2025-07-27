@@ -1,0 +1,269 @@
+# Fix Homepage Access - Allow All Users to View Landing Page
+
+## Problem Description
+The current app automatically redirects authenticated users to the dashboard, preventing them from ever seeing or accessing the homepage/landing page. This is incorrect behavior - the homepage should be accessible to everyone (both authenticated and unauthenticated users).
+
+## Current Issue
+- When an authenticated user visits `/` they are immediately redirected to `/dashboard`
+- The homepage/landing page is only visible to unauthenticated users
+- Page refresh always goes to dashboard for logged-in users
+- No way for authenticated users to view the homepage
+
+## Required Fix
+The homepage should be accessible to ALL users:
+- **Unauthenticated users**: See the homepage with login/signup options
+- **Authenticated users**: See the homepage but with different navigation (showing "Go to Dashboard" instead of "Login")
+
+## Solution: Update Routing Logic
+
+### Step 1: Fix App.tsx Routing
+Update the main routing logic to allow homepage access for all users:
+
+```typescript
+// In client/src/App.tsx - REPLACE the current routing logic:
+
+const App = () => {
+  const { user, isLoading } = useAuth();
+  
+  // Show loading spinner during auth check
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Router>
+      <Routes>
+        {/* Public routes - accessible to everyone */}
+        <Route path="/" element={<Landing />} />
+        
+        {/* Auth routes - redirect to dashboard if already logged in */}
+        <Route 
+          path="/login" 
+          element={user ? <Navigate to="/dashboard" replace /> : <Login />} 
+        />
+        <Route 
+          path="/signup" 
+          element={user ? <Navigate to="/dashboard" replace /> : <Signup />} 
+        />
+        
+        {/* Protected routes - require authentication */}
+        <Route 
+          path="/dashboard" 
+          element={
+            user ? (
+              <Layout>
+                <Dashboard />
+              </Layout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
+        
+        <Route 
+          path="/content" 
+          element={
+            user ? (
+              <Layout>
+                <ContentCreator />
+              </Layout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
+        
+        <Route 
+          path="/calendar" 
+          element={
+            user ? (
+              <Layout>
+                <Calendar />
+              </Layout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
+        
+        <Route 
+          path="/analytics" 
+          element={
+            user ? (
+              <Layout>
+                <Analytics />
+              </Layout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
+        
+        <Route 
+          path="/settings" 
+          element={
+            user ? (
+              <Layout>
+                <Settings />
+              </Layout>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
+        
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+};
+```
+
+### Step 2: Update Landing Page for Authenticated Users
+Modify the Landing page to show different content based on authentication status:
+
+```typescript
+// In client/src/pages/Landing.tsx - UPDATE to handle both user states:
+
+import { useAuth } from '../hooks/useAuth';
+import { Link } from 'react-router-dom';
+
+const Landing = () => {
+  const { user } = useAuth();
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Navigation Bar */}
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-gray-900">SocialSpark</h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              {user ? (
+                // Authenticated user navigation
+                <>
+                  <span className="text-gray-700">Welcome, {user.first_name || user.email}!</span>
+                  <Link
+                    to="/dashboard"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      // Add logout functionality
+                      localStorage.removeItem('token');
+                      window.location.reload();
+                    }}
+                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                // Unauthenticated user navigation
+                <>
+                  <Link
+                    to="/login"
+                    className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        <div className="text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            AI-Powered Social Media
+            <span className="text-blue-600 block">Made Simple</span>
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Create engaging content, schedule posts, and grow your business across all social platforms with the power of AI.
+          </p>
+          
+          {user ? (
+            <div className="space-y-4">
+              <p className="text-lg text-gray-700">Ready to create amazing content?</p>
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
+          ) : (
+            <div className="space-x-4">
+              <Link
+                to="/signup"
+                className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center px-8 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+              >
+                Sign In
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Rest of your existing landing page content */}
+      {/* Features, testimonials, etc. */}
+    </div>
+  );
+};
+
+export default Landing;
+```
+
+### Step 3: Test the Fixed Behavior
+
+After implementing these changes, test the following scenarios:
+
+1. **Unauthenticated user visits `/`**: Should see homepage with login/signup options
+2. **Authenticated user visits `/`**: Should see homepage with "Go to Dashboard" button  
+3. **Authenticated user refreshes on `/`**: Should stay on homepage (no auto-redirect)
+4. **Unauthenticated user tries `/dashboard`**: Should redirect to homepage
+5. **Navigation works correctly**: Users can navigate between all pages as expected
+
+## Key Changes Made
+
+✅ **Homepage accessible to all**: Both authenticated and unauthenticated users can view `/`
+✅ **No automatic redirects from homepage**: Users stay on homepage unless they choose to navigate
+✅ **Context-aware navigation**: Different buttons/options based on authentication status  
+✅ **Protected routes still work**: Dashboard and other protected pages require authentication
+✅ **Proper fallbacks**: Unauthenticated users trying to access protected routes go to homepage
+
+## Expected Result
+
+- **Homepage serves as the main landing page** for all users
+- **Authenticated users** see a personalized version with quick access to dashboard
+- **No unwanted redirects** - users stay where they navigate to
+- **Clean, professional experience** for both user types
+
+This fix ensures the homepage functions as a proper landing page that welcomes all visitors while providing appropriate navigation options based on their authentication status.

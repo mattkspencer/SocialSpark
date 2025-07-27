@@ -1,9 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
 
 export default function Landing() {
+  const { isAuthenticated, user } = useAuth();
+  const [, setLocation] = useLocation();
+
   const handleLogin = () => {
     window.location.href = "/api/login";
+  };
+
+  const handleDashboard = () => {
+    setLocation("/dashboard");
+  };
+
+  const handleLogout = () => {
+    window.location.href = "/api/logout";
   };
 
   return (
@@ -20,9 +33,21 @@ export default function Landing() {
               <p className="text-xs text-gray-500">AI-Powered Content</p>
             </div>
           </div>
-          <Button onClick={handleLogin} className="bg-primary-500 hover:bg-primary-600">
-            Sign In
-          </Button>
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-gray-700">Welcome, {user?.firstName || user?.email}!</span>
+              <Button onClick={handleDashboard} className="bg-primary-500 hover:bg-primary-600">
+                Dashboard
+              </Button>
+              <Button onClick={handleLogout} variant="outline">
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <Button onClick={handleLogin} className="bg-primary-500 hover:bg-primary-600">
+              Sign In
+            </Button>
+          )}
         </div>
       </header>
 
@@ -37,14 +62,28 @@ export default function Landing() {
             Create engaging content, schedule posts across platforms, and grow your business 
             with AI-generated content tailored to your industry.
           </p>
-          <Button 
-            onClick={handleLogin}
-            size="lg" 
-            className="bg-primary-500 hover:bg-primary-600 text-lg px-8 py-4"
-          >
-            Get Started Free
-            <i className="fas fa-arrow-right ml-2"></i>
-          </Button>
+          {isAuthenticated ? (
+            <div className="space-y-4">
+              <p className="text-lg text-gray-700">Ready to create amazing content?</p>
+              <Button 
+                onClick={handleDashboard}
+                size="lg" 
+                className="bg-primary-500 hover:bg-primary-600 text-lg px-8 py-4"
+              >
+                Go to Dashboard
+                <i className="fas fa-arrow-right ml-2"></i>
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              onClick={handleLogin}
+              size="lg" 
+              className="bg-primary-500 hover:bg-primary-600 text-lg px-8 py-4"
+            >
+              Get Started Free
+              <i className="fas fa-arrow-right ml-2"></i>
+            </Button>
+          )}
         </div>
 
         {/* Features Grid */}

@@ -30,19 +30,29 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
-        // Public routes for unauthenticated users
-        <Route path="/" component={Landing} />
-      ) : (
-        // Protected routes for authenticated users
+      {/* Public routes - accessible to everyone */}
+      <Route path="/" component={Landing} />
+      
+      {/* Protected routes - require authentication */}
+      {isAuthenticated ? (
         <Layout>
-          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/create" component={ContentCreator} />
           <Route path="/calendar" component={Calendar} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/settings" component={Settings} />
         </Layout>
+      ) : (
+        // Redirect unauthenticated users trying to access protected routes
+        <>
+          <Route path="/dashboard" component={() => { window.location.href = '/'; return null; }} />
+          <Route path="/create" component={() => { window.location.href = '/'; return null; }} />
+          <Route path="/calendar" component={() => { window.location.href = '/'; return null; }} />
+          <Route path="/analytics" component={() => { window.location.href = '/'; return null; }} />
+          <Route path="/settings" component={() => { window.location.href = '/'; return null; }} />
+        </>
       )}
+      
       <Route component={NotFound} />
     </Switch>
   );

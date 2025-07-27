@@ -115,6 +115,12 @@ Preferred communication style: Simple, everyday language.
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
 ### Recent Changes
+- **2025-01-27**: Fixed homepage access to allow all users to view landing page
+  - Updated routing logic to make homepage (/) accessible to both authenticated and unauthenticated users
+  - Modified Landing page to show context-aware navigation based on authentication status
+  - Authenticated users see welcome message and "Go to Dashboard" button
+  - Unauthenticated users see standard "Sign In" and "Get Started" options
+  - Protected routes redirect unauthenticated users back to homepage
 - **2025-01-27**: Fixed home page loading/routing issue that caused brief Landing page flash before redirecting to Dashboard
   - Separated loading state from authentication logic in App.tsx
   - Added proper loading spinner during auth verification
