@@ -115,6 +115,10 @@ Preferred communication style: Simple, everyday language.
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
 ### Recent Changes
+- **2025-01-27**: Made header sticky and improved navigation UX
+  - Header now remains fixed at top of page during scrolling (sticky positioning)
+  - Added z-index to ensure header appears above all page content
+  - Navigation and sign out always accessible regardless of scroll position
 - **2025-01-27**: Added homepage navigation and fixed sidebar Dashboard link
   - Added homepage navigation button to Layout header for easy navigation back to landing page
   - Fixed Dashboard navigation in sidebar (was pointing to "/" instead of "/dashboard")

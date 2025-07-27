@@ -1,0 +1,150 @@
+# Make Header Sticky/Fixed at Top of Page
+
+## Problem Description
+The header disappears when scrolling down on the dashboard and other pages. The header should remain fixed at the top of the page regardless of scroll position to provide consistent navigation access.
+
+## Solution: Implement Sticky Header
+
+### Update Layout Component CSS
+The header needs `position: sticky` or `position: fixed` with proper z-index to stay at the top during scrolling.
+
+### Method 1: Sticky Header (Recommended)
+Update the header in `client/src/components/Layout.tsx`:
+
+```typescript
+// In client/src/components/Layout.tsx - Update the header element:
+<header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex justify-between items-center h-16">
+      {/* Existing header content */}
+    </div>
+  </div>
+</header>
+```
+
+**Key CSS Classes:**
+- `sticky` - Makes the header stick to the top when scrolling
+- `top-0` - Positions the sticky element at the very top (0px from top)
+- `z-50` - High z-index ensures header stays above other content
+- `bg-white` - Solid background so content doesn't show through when scrolling
+
+### Method 2: Fixed Header (Alternative)
+If sticky doesn't work as expected, use fixed positioning:
+
+```typescript
+// Alternative approach with fixed positioning:
+<header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm border-b border-gray-200">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex justify-between items-center h-16">
+      {/* Existing header content */}
+    </div>
+  </div>
+</header>
+
+// And add padding to the main content to account for fixed header:
+<main className="flex-1 p-6 pt-20"> {/* pt-20 adds top padding for fixed header */}
+  {children}
+</main>
+```
+
+### Complete Layout Component Update
+Here's the full updated Layout component with sticky header:
+
+```typescript
+// Complete update for client/src/components/Layout.tsx:
+import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import Sidebar from './Sidebar';
+
+const Layout = ({ children }) => {
+  const { user } = useAuth();
+  
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Sticky Header - stays at top during scroll */}
+      <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Left side - Logo/Home button */}
+            <div className="flex items-center">
+              <Link 
+                to="/"
+                className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
+              >
+                SocialAI
+              </Link>
+            </div>
+            
+            {/* Right side - User info and actions */}
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-700">
+                Welcome, {user?.first_name || user?.email}
+              </span>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  window.location.href = '/';
+                }}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-1 rounded-md hover:bg-gray-100"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      {/* Main content area with sidebar */}
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Layout;
+```
+
+## Key Benefits of Sticky Header
+
+✅ **Always accessible navigation** - Users can always return to homepage
+✅ **Consistent branding** - Logo remains visible at all times  
+✅ **Easy sign out** - Sign out button always available
+✅ **Professional UX** - Standard behavior users expect
+✅ **No layout shift** - Unlike fixed headers, sticky headers don't require layout compensation
+
+## CSS Explanation
+
+- **`sticky`**: Element sticks to specified position when scrolling reaches it
+- **`top-0`**: Stick to the very top of the viewport (0px from top)
+- **`z-50`**: High z-index (z-index: 50) ensures header appears above content
+- **`bg-white`**: Solid white background prevents content bleeding through
+- **`shadow-sm`**: Subtle shadow for visual separation from content below
+
+## Testing the Fix
+
+After implementing, test by:
+
+1. **Navigate to dashboard** and scroll down - header should remain visible
+2. **Scroll on other pages** (Content Creator, Calendar, etc.) - header stays fixed
+3. **Check on mobile** - ensure responsive behavior is maintained
+4. **Test navigation** - ensure logo click still works while scrolled
+5. **Verify z-index** - header should appear above all page content
+
+## Alternative: Enhanced Sticky Header
+
+For even better UX, you could add a slight background blur or transparency:
+
+```typescript
+// Enhanced version with backdrop blur:
+<header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200">
+  {/* Same content */}
+</header>
+```
+
+This creates a modern glass-morphism effect where content slightly shows through with a blur effect.
+
+The sticky header will greatly improve the user experience by ensuring navigation is always accessible, which is especially important for content creation workflows where users might be scrolling through long forms or content lists.
