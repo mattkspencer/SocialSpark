@@ -60,32 +60,34 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome Header */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-8 text-white relative overflow-hidden shadow-lg">
+      {/* Premium Welcome Header */}
+      <section className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-3xl p-8 lg:p-12 text-white relative overflow-hidden shadow-premium-xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full transform translate-x-32 -translate-y-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full transform -translate-x-24 translate-y-24"></div>
+        
         <div className="relative z-10">
-          <h1 className="text-3xl font-bold mb-2 text-white">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-white tracking-tight">
             Welcome back, {user?.businessName || user?.firstName || 'there'}!
           </h1>
-          <p className="text-blue-100 text-lg">Ready to create engaging content today?</p>
-          <div className="mt-6 flex flex-wrap gap-4">
-            <Button
+          <p className="text-blue-100 text-xl mb-8 max-w-2xl">Ready to create engaging content that grows your business?</p>
+          
+          <div className="flex flex-wrap gap-4">
+            <button
               onClick={() => navigate("/create")}
-              className="bg-white text-blue-700 hover:bg-gray-50 font-semibold shadow-md"
+              className="bg-white text-primary-600 hover:bg-gray-50 px-6 py-3 rounded-xl font-semibold shadow-premium-lg hover:shadow-premium-xl transition-all hover:scale-[1.02]"
             >
               <i className="fas fa-magic mr-2"></i>
               Create AI Content
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => navigate("/calendar")}
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-blue-700 font-semibold"
+              className="border-2 border-white text-white hover:bg-white hover:text-primary-600 px-6 py-3 rounded-xl font-semibold transition-all hover:scale-[1.02]"
             >
               <i className="fas fa-calendar mr-2"></i>
               View Calendar
-            </Button>
+            </button>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full transform translate-x-32 -translate-y-32"></div>
       </section>
 
       {/* Key Metrics */}
@@ -119,10 +121,10 @@ export default function Dashboard() {
         />
       </section>
 
-      {/* Quick Actions */}
-      <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h2 className="text-xl font-semibold mb-6 text-gray-900">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Premium Quick Actions */}
+      <section className="bg-white rounded-3xl p-8 shadow-premium-lg border border-gray-100">
+        <h2 className="text-2xl font-bold mb-8 text-gray-900 tracking-tight">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <QuickActionCard
             icon="✨"
             title="Create AI Content"
@@ -150,33 +152,35 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Recent Activity */}
-      <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
-          <Button
+      {/* Premium Recent Activity */}
+      <section className="bg-white rounded-3xl p-8 shadow-premium-lg border border-gray-100">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Recent Activity</h2>
+          <button
             onClick={() => navigate("/analytics")}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md text-sm px-4 py-2"
+            className="text-blue-600 hover:text-blue-700 font-semibold text-sm transition-colors"
           >
-            View All
-          </Button>
+            View All <i className="fas fa-arrow-right ml-1"></i>
+          </button>
         </div>
 
         {!recentPosts || (recentPosts as any[]).length === 0 ? (
-          <div className="text-center py-8">
-            <i className="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
-            <p className="text-gray-600 mb-4 text-lg">No posts yet. Create your first AI-generated content!</p>
-            <Button
+          <div className="text-center py-12">
+            <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <i className="fas fa-inbox text-3xl text-gray-400"></i>
+            </div>
+            <p className="text-gray-600 mb-6 text-lg">No posts yet. Create your first AI-generated content!</p>
+            <button
               onClick={() => navigate("/create")}
-              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md"
+              className="btn-primary px-6 py-3 shadow-premium-lg hover:shadow-premium-xl"
             >
               Create Content
-            </Button>
+            </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {(recentPosts as any[]).slice(0, 3).map((post: any) => (
-              <div key={post.id} className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <div key={post.id} className="flex items-start space-x-4 p-6 rounded-2xl bg-gray-25 border border-gray-100 hover-lift transition-all">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                   post.status === 'published' ? 'bg-green-600' : 
                   post.status === 'scheduled' ? 'bg-orange-600' : 'bg-blue-600'

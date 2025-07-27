@@ -23,32 +23,30 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with homepage navigation */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-25">
+      {/* Premium Header */}
+      <header className="sticky top-0 z-50 glass-strong border-b border-gray-200/50">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Left side - Logo and Home button */}
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={handleHomeClick}
-                className="flex items-center space-x-2 text-gray-900 hover:text-primary-600 transition-colors"
-              >
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                  <i className="fas fa-magic text-white text-sm"></i>
-                </div>
-                <span className="font-semibold text-lg">SocialAI</span>
-              </button>
-            </div>
+            {/* Left side - Premium Logo */}
+            <button 
+              onClick={handleHomeClick}
+              className="flex items-center space-x-3 text-gray-900 hover:text-primary-600 transition-colors group"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <i className="fas fa-magic text-white text-sm"></i>
+              </div>
+              <span className="font-semibold text-xl tracking-tight">SocialAI</span>
+            </button>
             
-            {/* Right side - User info */}
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
+            {/* Right side - Premium User info */}
+            <div className="flex items-center space-x-6">
+              <span className="text-sm text-gray-600 font-medium">
                 {user?.firstName || user?.email}
               </span>
               <button
                 onClick={handleLogout}
-                className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-1 rounded-md hover:bg-gray-100"
+                className="btn-ghost text-sm px-4 py-2"
               >
                 Sign Out
               </button>
@@ -57,11 +55,11 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </header>
       
-      {/* Main content area */}
+      {/* Premium Main content area */}
       <div className="flex">
         <Sidebar />
         <main className="flex-1 overflow-auto">
-          <div className="p-8">
+          <div className="p-8 lg:p-12 max-w-7xl mx-auto">
             {children}
           </div>
         </main>
