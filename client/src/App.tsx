@@ -33,25 +33,56 @@ function Router() {
       {/* Public routes - accessible to everyone */}
       <Route path="/" component={Landing} />
       
-      {/* Protected routes - require authentication */}
-      {isAuthenticated ? (
-        <Layout>
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/create" component={ContentCreator} />
-          <Route path="/calendar" component={Calendar} />
-          <Route path="/analytics" component={Analytics} />
-          <Route path="/settings" component={Settings} />
-        </Layout>
-      ) : (
-        // Redirect unauthenticated users trying to access protected routes
-        <>
-          <Route path="/dashboard" component={() => { window.location.href = '/'; return null; }} />
-          <Route path="/create" component={() => { window.location.href = '/'; return null; }} />
-          <Route path="/calendar" component={() => { window.location.href = '/'; return null; }} />
-          <Route path="/analytics" component={() => { window.location.href = '/'; return null; }} />
-          <Route path="/settings" component={() => { window.location.href = '/'; return null; }} />
-        </>
-      )}
+      {/* Protected routes with individual authentication checks */}
+      <Route path="/dashboard" component={() => 
+        isAuthenticated ? (
+          <Layout>
+            <Dashboard />
+          </Layout>
+        ) : (
+          (() => { window.location.href = '/'; return null; })()
+        )
+      } />
+      
+      <Route path="/create" component={() => 
+        isAuthenticated ? (
+          <Layout>
+            <ContentCreator />
+          </Layout>
+        ) : (
+          (() => { window.location.href = '/'; return null; })()
+        )
+      } />
+      
+      <Route path="/calendar" component={() => 
+        isAuthenticated ? (
+          <Layout>
+            <Calendar />
+          </Layout>
+        ) : (
+          (() => { window.location.href = '/'; return null; })()
+        )
+      } />
+      
+      <Route path="/analytics" component={() => 
+        isAuthenticated ? (
+          <Layout>
+            <Analytics />
+          </Layout>
+        ) : (
+          (() => { window.location.href = '/'; return null; })()
+        )
+      } />
+      
+      <Route path="/settings" component={() => 
+        isAuthenticated ? (
+          <Layout>
+            <Settings />
+          </Layout>
+        ) : (
+          (() => { window.location.href = '/'; return null; })()
+        )
+      } />
       
       <Route component={NotFound} />
     </Switch>

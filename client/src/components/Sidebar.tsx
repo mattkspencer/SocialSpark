@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { id: 'dashboard', name: 'Dashboard', href: '/', icon: 'fas fa-chart-line' },
+  { id: 'dashboard', name: 'Dashboard', href: '/dashboard', icon: 'fas fa-chart-line' },
   { id: 'create', name: 'Create Content', href: '/create', icon: 'fas fa-plus-circle' },
   { id: 'calendar', name: 'Calendar', href: '/calendar', icon: 'fas fa-calendar-alt' },
   { id: 'analytics', name: 'Analytics', href: '/analytics', icon: 'fas fa-chart-bar' },
@@ -37,7 +37,8 @@ export default function Sidebar() {
       <nav className="flex-1 px-4 space-y-2">
         {navigation.map((item) => {
           const isActive = location === item.href || 
-            (item.href !== '/' && location.startsWith(item.href));
+            (item.href !== '/' && item.href !== '/dashboard' && location.startsWith(item.href)) ||
+            (item.href === '/dashboard' && location === '/dashboard');
           
           return (
             <button
