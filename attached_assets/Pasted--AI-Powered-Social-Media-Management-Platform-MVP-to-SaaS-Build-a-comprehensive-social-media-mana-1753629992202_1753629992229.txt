@@ -1,0 +1,2896 @@
+# AI-Powered Social Media Management Platform - MVP to SaaS
+
+Build a comprehensive social media management platform that leverages AI to create engaging content and automates posting across multiple platforms. Designed initially as a personal MVP for local business owners (roofing, construction, etc.) with built-in scalability for future SaaS transformation.
+
+## 🎯 Project Vision
+
+Create a modern, AI-driven social media management tool that solves the content creation and scheduling pain points for local businesses. Start as a personal-use MVP to validate the concept, then scale to serve paying customers.
+
+**Key Value Propositions:**
+- AI-generated content tailored to specific business types
+- Automated cross-platform posting (Facebook, Instagram, YouTube)
+- Faceless content creation capabilities
+- Professional templates and industry-specific prompts
+- Clean, intuitive interface that feels premium
+- Built for scalability from day one
+
+## 🏗️ Technical Architecture
+
+### Tech Stack (Production-Ready MVP):
+- **Frontend**: React 18 + Vite + TypeScript
+- **Backend**: Node.js + Express.js + TypeScript
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT + bcrypt
+- **AI Integration**: OpenAI GPT-3.5 Turbo
+- **Styling**: Tailwind CSS + Headless UI
+- **State Management**: React Context + TanStack Query
+- **File Upload**: Multer + local storage (cloud-ready)
+- **Task Scheduling**: node-cron for automated posting
+
+### Project Structure:
+```
+social-media-ai-platform/
+├── client/                     # React frontend
+│   ├── src/
+│   │   ├── components/         # Reusable UI components
+│   │   │   ├── ui/            # Base UI components (buttons, inputs, etc.)
+│   │   │   ├── content/       # Content creation components
+│   │   │   ├── calendar/      # Calendar and scheduling
+│   │   │   └── analytics/     # Performance tracking
+│   │   ├── pages/             # Main application pages
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── ContentCreator.tsx
+│   │   │   ├── Calendar.tsx
+│   │   │   ├── Analytics.tsx
+│   │   │   └── Settings.tsx
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── services/          # API integration
+│   │   ├── utils/             # Helper functions
+│   │   ├── types/             # TypeScript definitions
+│   │   └── assets/            # Images, icons, etc.
+├── server/                     # Express.js backend
+│   ├── src/
+│   │   ├── routes/            # API endpoints
+│   │   │   ├── auth.ts
+│   │   │   ├── content.ts
+│   │   │   ├── posts.ts
+│   │   │   ├── platforms.ts
+│   │   │   └── analytics.ts
+│   │   ├── services/          # Business logic
+│   │   │   ├── AIContentService.ts
+│   │   │   ├── PlatformService.ts
+│   │   │   ├── SchedulingService.ts
+│   │   │   └── AnalyticsService.ts
+│   │   ├── models/            # Database models
+│   │   ├── middleware/        # Auth, validation, etc.
+│   │   ├── utils/             # Helper functions
+│   │   └── types/             # TypeScript interfaces
+├── shared/                     # Shared types and utilities
+├── prisma/                     # Database schema and migrations
+└── uploads/                    # Local file storage
+```
+
+## 🎨 UI/UX Design System
+
+### Design Philosophy:
+- **Professional yet approachable**: Clean, modern interface that inspires confidence
+- **Mobile-first responsive**: Works perfectly on all devices
+- **Efficiency-focused**: Minimize clicks to accomplish tasks
+- **Visual hierarchy**: Clear information structure and intuitive navigation
+- **Subtle animations**: Smooth transitions that feel premium without being distracting
+
+### Color Palette:
+```css
+:root {
+  /* Primary Brand Colors */
+  --primary-50: #eff6ff;
+  --primary-500: #3b82f6;    /* Main brand blue */
+  --primary-600: #2563eb;    /* Hover states */
+  --primary-700: #1d4ed8;    /* Active states */
+  
+  /* Semantic Colors */
+  --success: #10b981;        /* Success states, published content */
+  --warning: #f59e0b;        /* Warnings, scheduled content */
+  --error: #ef4444;          /* Errors, failed posts */
+  
+  /* Neutral Palette */
+  --gray-50: #f9fafb;        /* Light backgrounds */
+  --gray-100: #f3f4f6;       /* Card backgrounds */
+  --gray-200: #e5e7eb;       /* Borders */
+  --gray-500: #6b7280;       /* Secondary text */
+  --gray-900: #111827;       /* Primary text */
+  --white: #ffffff;
+  
+  /* Business-specific accents */
+  --roofing-accent: #dc2626;  /* Red for roofing business */
+  --construction-accent: #ea580c; /* Orange for construction */
+}
+```
+
+### Typography:
+- **Font Family**: Inter (Google Fonts)
+- **Headings**: Font weights 600-700
+- **Body Text**: Font weight 400, line-height 1.6
+- **Small Text**: Font weight 500 for labels and metadata
+
+## 🚀 Core Features & Components
+
+### 1. Dashboard (Command Center)
+```jsx
+// Main dashboard with overview and quick actions
+const Dashboard = () => {
+  const { user } = useAuth();
+  const { data: metrics } = useQuery(['dashboard-metrics'], fetchDashboardMetrics);
+  
+  return (
+    <div className="space-y-8">
+      {/* Welcome Header */}
+      <section className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-8 text-white">
+        <h1 className="text-3xl font-bold mb-2">
+          Welcome back, {user.businessName || user.name}!
+        </h1>
+        <p className="text-primary-100">Ready to create engaging content today?</p>
+      </section>
+
+      {/* Key Metrics */}
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <MetricCard 
+          title="Posts This Month" 
+          value={metrics?.postsThisMonth || 0}
+          trend={metrics?.postsTrend}
+          icon="📊"
+        />
+        <MetricCard 
+          title="Total Reach" 
+          value={formatNumber(metrics?.totalReach || 0)}
+          trend={metrics?.reachTrend}
+          icon="👥"
+        />
+        <MetricCard 
+          title="Engagement Rate" 
+          value={`${metrics?.engagementRate || 0}%`}
+          trend={metrics?.engagementTrend}
+          icon="❤️"
+        />
+        <MetricCard 
+          title="Scheduled Posts" 
+          value={metrics?.scheduledPosts || 0}
+          icon="📅"
+        />
+      </section>
+
+      {/* Quick Actions */}
+      <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h2 className="text-xl font-semibold mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <QuickActionCard 
+            icon="✨"
+            title="Create AI Content"
+            description="Generate posts with AI"
+            onClick={() => navigate('/create')}
+            color="primary"
+          />
+          <QuickActionCard 
+            icon="🎬"
+            title="Faceless Video"
+            description="Create video content without showing face"
+            onClick={() => navigate('/create?type=video')}
+            color="success"
+          />
+          <QuickActionCard 
+            icon="📅"
+            title="Schedule Posts"
+            description="Plan your content calendar"
+            onClick={() => navigate('/calendar')}
+            color="warning"
+          />
+        </div>
+      </section>
+
+      {/* Recent Activity */}
+      <section className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h2 className="text-xl font-semibold mb-6">Recent Activity</h2>
+        <RecentActivityFeed />
+      </section>
+    </div>
+  );
+};
+```
+
+### 2. AI Content Creator (Core Feature)
+```jsx
+const ContentCreator = () => {
+  const [step, setStep] = useState(1);
+  const [contentData, setContentData] = useState({
+    businessType: '',
+    contentType: '',
+    platform: [],
+    tone: 'professional',
+    customPrompt: ''
+  });
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      {/* Progress Indicator */}
+      <div className="mb-8">
+        <ProgressBar currentStep={step} totalSteps={5} />
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        {step === 1 && (
+          <BusinessTypeSelector
+            title="What's your business?"
+            subtitle="We'll customize content templates for your industry"
+            options={[
+              { id: 'roofing', name: 'Roofing & Construction', icon: '🏠' },
+              { id: 'realestate', name: 'Real Estate', icon: '🏡' },
+              { id: 'fitness', name: 'Fitness & Health', icon: '💪' },
+              { id: 'restaurant', name: 'Restaurant & Food', icon: '🍕' },
+              { id: 'automotive', name: 'Automotive', icon: '🚗' },
+              { id: 'general', name: 'General Business', icon: '💼' }
+            ]}
+            selected={contentData.businessType}
+            onSelect={(type) => {
+              setContentData({...contentData, businessType: type});
+              setStep(2);
+            }}
+          />
+        )}
+
+        {step === 2 && (
+          <ContentTypeSelector
+            title="What type of content?"
+            options={[
+              {
+                id: 'social_post',
+                name: 'Social Media Post',
+                description: 'Text-based posts for Facebook, Instagram, LinkedIn',
+                icon: '📝',
+                duration: '2 min'
+              },
+              {
+                id: 'faceless_video',
+                name: 'Faceless Video Script',
+                description: 'Scripts for YouTube Shorts, Instagram Reels',
+                icon: '🎬',
+                duration: '5 min'
+              },
+              {
+                id: 'before_after',
+                name: 'Before/After Showcase',
+                description: 'Highlight transformations and results',
+                icon: '🔄',
+                duration: '3 min'
+              },
+              {
+                id: 'educational_tips',
+                name: 'Educational Tips',
+                description: 'Share expertise and build authority',
+                icon: '🎓',
+                duration: '4 min'
+              }
+            ]}
+            selected={contentData.contentType}
+            onSelect={(type) => {
+              setContentData({...contentData, contentType: type});
+              setStep(3);
+            }}
+          />
+        )}
+
+        {step === 3 && (
+          <PlatformSelector
+            title="Where do you want to post?"
+            platforms={[
+              { id: 'facebook', name: 'Facebook', icon: '📘', free: true },
+              { id: 'instagram', name: 'Instagram', icon: '📷', free: true },
+              { id: 'youtube', name: 'YouTube', icon: '📺', free: true },
+              { id: 'twitter', name: 'Twitter/X', icon: '🐦', cost: '$200/month' }
+            ]}
+            selected={contentData.platform}
+            onSelect={(platforms) => {
+              setContentData({...contentData, platform: platforms});
+              setStep(4);
+            }}
+          />
+        )}
+
+        {step === 4 && (
+          <CustomizationOptions
+            businessType={contentData.businessType}
+            contentType={contentData.contentType}
+            onCustomize={(options) => {
+              setContentData({...contentData, ...options});
+              setStep(5);
+            }}
+          />
+        )}
+
+        {step === 5 && (
+          <AIContentGenerator
+            contentData={contentData}
+            onGenerated={(generatedContent) => {
+              // Handle generated content
+              navigate('/editor', { state: { content: generatedContent } });
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+```
+
+### 3. Content Calendar & Scheduling
+```jsx
+const ContentCalendar = () => {
+  const [view, setView] = useState('month'); // month, week, list
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { data: posts } = useQuery(['posts', selectedDate], fetchPosts);
+
+  return (
+    <div className="space-y-6">
+      {/* Header with view controls */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Content Calendar</h1>
+          <p className="text-gray-500 mt-1">Plan and schedule your content</p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <ViewToggle
+            options={[
+              { value: 'month', label: 'Month', icon: '📅' },
+              { value: 'week', label: 'Week', icon: '📊' },
+              { value: 'list', label: 'List', icon: '📋' }
+            ]}
+            value={view}
+            onChange={setView}
+          />
+          
+          <Button
+            variant="primary"
+            icon="+"
+            onClick={() => navigate('/create')}
+          >
+            Create Content
+          </Button>
+        </div>
+      </div>
+
+      {/* Calendar View */}
+      {view === 'month' && (
+        <CalendarGrid
+          posts={posts}
+          selectedDate={selectedDate}
+          onDateSelect={setSelectedDate}
+          onPostClick={(post) => navigate(`/posts/${post.id}`)}
+          onCreatePost={(date) => navigate('/create', { state: { scheduledDate: date } })}
+        />
+      )}
+
+      {view === 'week' && (
+        <WeekView
+          posts={posts}
+          selectedDate={selectedDate}
+          onDateSelect={setSelectedDate}
+        />
+      )}
+
+      {view === 'list' && (
+        <ListView
+          posts={posts}
+          onPostEdit={(post) => navigate(`/posts/${post.id}/edit`)}
+          onPostDelete={deletePost}
+        />
+      )}
+    </div>
+  );
+};
+```
+
+## 🤖 AI Integration & Business Logic
+
+### AI Content Service (Core Engine)
+```typescript
+// services/AIContentService.ts
+interface ContentRequest {
+  businessType: string;
+  contentType: 'social_post' | 'faceless_video' | 'before_after' | 'educational_tips';
+  platforms: string[];
+  tone: 'professional' | 'casual' | 'enthusiastic' | 'educational';
+  customPrompt?: string;
+  targetAudience?: string;
+}
+
+interface GeneratedContent {
+  title: string;
+  content: string;
+  hashtags: string[];
+  platformVersions: Record<string, string>;
+  visualSuggestions?: string[];
+  callToAction: string;
+  estimatedEngagement: 'low' | 'medium' | 'high';
+}
+
+class AIContentService {
+  static async generateContent(request: ContentRequest): Promise<GeneratedContent> {
+    const systemPrompt = this.buildSystemPrompt(request);
+    const userPrompt = this.buildUserPrompt(request);
+    
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      });
+
+      const generatedContent = this.parseResponse(response.choices[0].message.content);
+      
+      // Generate platform-specific versions
+      const platformVersions = await this.optimizeForPlatforms(
+        generatedContent.content, 
+        request.platforms
+      );
+
+      return {
+        ...generatedContent,
+        platformVersions
+      };
+      
+    } catch (error) {
+      console.error('AI Content Generation Error:', error);
+      throw new Error('Failed to generate content. Please try again.');
+    }
+  }
+
+  private static buildSystemPrompt(request: ContentRequest): string {
+    const businessPrompts = {
+      roofing: `You are a social media expert specializing in roofing and construction businesses. Create content that:
+        - Builds trust and authority in roofing expertise
+        - Addresses common homeowner concerns (leaks, storm damage, maintenance)
+        - Showcases quality workmanship and reliability
+        - Uses industry terminology appropriately
+        - Includes strong calls-to-action for free estimates or consultations`,
+      
+      realestate: `You are a social media expert for real estate professionals. Create content that:
+        - Builds trust in real estate expertise
+        - Provides valuable market insights and tips
+        - Showcases properties and market knowledge
+        - Addresses buyer and seller concerns
+        - Includes calls-to-action for consultations`,
+      
+      general: `You are a versatile social media content creator. Create engaging, professional content that:
+        - Builds brand authority and trust
+        - Provides genuine value to the audience
+        - Uses appropriate industry language
+        - Includes compelling calls-to-action`
+    };
+
+    const contentTypePrompts = {
+      social_post: 'Create engaging social media posts that spark conversation and engagement',
+      faceless_video: 'Create video scripts for faceless content with clear visual cues and timing',
+      before_after: 'Create content showcasing transformations and results',
+      educational_tips: 'Create educational content that positions the business as an expert'
+    };
+
+    return `${businessPrompts[request.businessType] || businessPrompts.general}
+
+${contentTypePrompts[request.contentType]}
+
+Tone: ${request.tone}
+Format your response as valid JSON with these fields:
+- title: Attention-grabbing title
+- content: Main content body
+- hashtags: Array of relevant hashtags (max 10)
+- visualSuggestions: Array of visual content suggestions
+- callToAction: Clear, compelling call-to-action
+- estimatedEngagement: Predicted engagement level`;
+  }
+
+  private static buildUserPrompt(request: ContentRequest): string {
+    const basePrompt = `Create ${request.contentType} content for a ${request.businessType} business.`;
+    
+    if (request.customPrompt) {
+      return `${basePrompt}\n\nSpecific requirements: ${request.customPrompt}`;
+    }
+
+    // Industry-specific default prompts
+    const defaultPrompts = {
+      roofing: {
+        social_post: 'Create a post about the importance of regular roof inspections',
+        faceless_video: 'Create a script about "5 signs your roof needs repair" with visual cues',
+        before_after: 'Create content showcasing a roof transformation project',
+        educational_tips: 'Create educational content about roof maintenance for homeowners'
+      }
+    };
+
+    const industryPrompts = defaultPrompts[request.businessType];
+    if (industryPrompts && industryPrompts[request.contentType]) {
+      return `${basePrompt}\n\n${industryPrompts[request.contentType]}`;
+    }
+
+    return basePrompt;
+  }
+
+  private static async optimizeForPlatforms(
+    content: string, 
+    platforms: string[]
+  ): Promise<Record<string, string>> {
+    const optimizations = {};
+
+    for (const platform of platforms) {
+      const platformSpecs = {
+        facebook: {
+          maxLength: 2000,
+          style: 'Conversational, can be longer, include links',
+          format: 'Paragraph format with line breaks'
+        },
+        instagram: {
+          maxLength: 2200,
+          style: 'Visual-focused, use emojis, hashtag-heavy',
+          format: 'Short paragraphs, lots of line breaks'
+        },
+        youtube: {
+          maxLength: 1000,
+          style: 'Video description format, include timestamps',
+          format: 'Description for video content'
+        }
+      };
+
+      const spec = platformSpecs[platform];
+      if (spec) {
+        optimizations[platform] = await this.optimizeForSpecificPlatform(content, spec);
+      }
+    }
+
+    return optimizations;
+  }
+
+  static async generateFacelessVideoScript(
+    businessType: string,
+    topic: string,
+    duration: number = 60
+  ): Promise<FacelessVideoScript> {
+    const systemPrompt = `You are an expert at creating engaging faceless video scripts for ${businessType} businesses.
+
+Create a ${duration}-second video script with:
+- Hook (0-3s): Attention-grabbing opening
+- Problem/Situation (3-20s): Identify the issue or situation
+- Solution/Value (20-50s): Provide expertise and value
+- Call-to-Action (50-60s): Clear next step
+
+Include detailed visual cues for faceless content:
+- Text overlays
+- Image/video suggestions
+- Transitions
+- Timing markers
+
+Format as JSON with timeline segments.`;
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `Create a faceless video script about: ${topic}` }
+      ],
+      temperature: 0.8,
+      max_tokens: 800
+    });
+
+    return this.parseVideoScript(response.choices[0].message.content);
+  }
+}
+
+interface FacelessVideoScript {
+  title: string;
+  totalDuration: number;
+  segments: VideoSegment[];
+  hashtags: string[];
+  description: string;
+}
+
+interface VideoSegment {
+  timeStart: number;
+  timeEnd: number;
+  script: string;
+  visualCue: string;
+  textOverlay?: string;
+  transition?: string;
+}
+```
+
+## 🔗 Platform Integration Services
+
+### Social Media Platform Manager
+```typescript
+// services/PlatformService.ts
+interface PlatformConnection {
+  platform: string;
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: Date;
+  isActive: boolean;
+}
+
+interface PostResult {
+  success: boolean;
+  platformPostId?: string;
+  url?: string;
+  error?: string;
+}
+
+class PlatformService {
+  static async postToMultiplePlatforms(
+    content: string,
+    mediaUrls: string[],
+    platforms: string[],
+    userConnections: PlatformConnection[]
+  ): Promise<Record<string, PostResult>> {
+    const results: Record<string, PostResult> = {};
+
+    for (const platform of platforms) {
+      const connection = userConnections.find(c => c.platform === platform && c.isActive);
+      
+      if (!connection) {
+        results[platform] = {
+          success: false,
+          error: `No active connection for ${platform}`
+        };
+        continue;
+      }
+
+      try {
+        switch (platform) {
+          case 'facebook':
+            results[platform] = await FacebookService.createPost(content, mediaUrls, connection.accessToken);
+            break;
+          case 'instagram':
+            results[platform] = await InstagramService.createPost(content, mediaUrls, connection.accessToken);
+            break;
+          case 'youtube':
+            results[platform] = await YouTubeService.uploadVideo(content, mediaUrls[0], connection.accessToken);
+            break;
+          default:
+            results[platform] = {
+              success: false,
+              error: `Platform ${platform} not supported`
+            };
+        }
+      } catch (error) {
+        results[platform] = {
+          success: false,
+          error: error.message
+        };
+      }
+    }
+
+    return results;
+  }
+}
+
+// Facebook Integration
+class FacebookService {
+  static async createPost(content: string, mediaUrls: string[], accessToken: string): Promise<PostResult> {
+    try {
+      const postData: any = {
+        message: content,
+        access_token: accessToken
+      };
+
+      // Handle media attachments
+      if (mediaUrls.length > 0) {
+        // For simplicity, handle single image first
+        postData.url = mediaUrls[0];
+      }
+
+      const response = await fetch('https://graph.facebook.com/me/feed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        return {
+          success: true,
+          platformPostId: result.id,
+          url: `https://facebook.com/${result.id}`
+        };
+      } else {
+        throw new Error(result.error?.message || 'Facebook post failed');
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+}
+
+// Instagram Integration  
+class InstagramService {
+  static async createPost(content: string, mediaUrls: string[], accessToken: string): Promise<PostResult> {
+    try {
+      // Instagram requires 2-step process for media posts
+      
+      // Step 1: Create media container
+      const containerResponse = await fetch('https://graph.facebook.com/me/media', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          image_url: mediaUrls[0], // Assuming first media is image
+          caption: content,
+          access_token: accessToken
+        })
+      });
+
+      const containerData = await containerResponse.json();
+
+      if (!containerResponse.ok) {
+        throw new Error(containerData.error?.message || 'Failed to create media container');
+      }
+
+      // Step 2: Publish the media
+      const publishResponse = await fetch('https://graph.facebook.com/me/media_publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          creation_id: containerData.id,
+          access_token: accessToken
+        })
+      });
+
+      const publishData = await publishResponse.json();
+
+      if (publishResponse.ok) {
+        return {
+          success: true,
+          platformPostId: publishData.id,
+          url: `https://instagram.com/p/${publishData.id}`
+        };
+      } else {
+        throw new Error(publishData.error?.message || 'Failed to publish to Instagram');
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+}
+
+// YouTube Integration
+class YouTubeService {
+  static async uploadVideo(description: string, videoUrl: string, accessToken: string): Promise<PostResult> {
+    try {
+      // Note: This is a simplified version. Full implementation would handle video upload
+      const response = await fetch('https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          snippet: {
+            title: description.split('\n')[0] || 'Video Title',
+            description: description,
+            categoryId: '22' // People & Blogs
+          },
+          status: {
+            privacyStatus: 'public'
+          }
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        return {
+          success: true,
+          platformPostId: result.id,
+          url: `https://youtu.be/${result.id}`
+        };
+      } else {
+        throw new Error(result.error?.message || 'YouTube upload failed');
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+}
+```
+
+## 📊 Database Schema & Models
+
+### PostgreSQL Schema (Scalable Design)
+```sql
+-- Users table (multi-tenant ready)
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255),
+  business_name VARCHAR(255),
+  business_type VARCHAR(100) DEFAULT 'general',
+  
+  -- Subscription & billing (for future SaaS)
+  subscription_tier VARCHAR(50) DEFAULT 'free',
+  subscription_status VARCHAR(50) DEFAULT 'active',
+  trial_ends_at TIMESTAMP,
+  
+  -- Usage tracking
+  monthly_posts_count INTEGER DEFAULT 0,
+  monthly_ai_requests INTEGER DEFAULT 0,
+  last_usage_reset DATE DEFAULT CURRENT_DATE,
+  
+  -- Preferences
+  default_timezone VARCHAR(50) DEFAULT 'UTC',
+  notification_preferences JSONB DEFAULT '{}',
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Platform connections (OAuth tokens)
+CREATE TABLE platform_connections (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  platform VARCHAR(50) NOT NULL,
+  
+  -- OAuth tokens
+  access_token TEXT NOT NULL,
+  refresh_token TEXT,
+  token_expires_at TIMESTAMP,
+  
+  -- Platform-specific data
+  platform_user_id VARCHAR(255),
+  platform_username VARCHAR(255),
+  platform_data JSONB DEFAULT '{}',
+  
+  -- Status
+  is_active BOOLEAN DEFAULT true,
+  last_used_at TIMESTAMP,
+  connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  UNIQUE(user_id, platform)
+);
+
+-- Content posts
+CREATE TABLE posts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Content
+  title VARCHAR(500),
+  content TEXT NOT NULL,
+  content_type VARCHAR(50) DEFAULT 'social_post', -- social_post, faceless_video, etc.
+  
+  -- Media
+  media_urls TEXT[],
+  thumbnail_url VARCHAR(500),
+  
+  -- Scheduling
+  target_platforms VARCHAR(50)[] NOT NULL,
+  scheduled_time TIMESTAMP NOT NULL,
+  timezone VARCHAR(50) DEFAULT 'UTC',
+  
+  -- Status
+  status VARCHAR(50) DEFAULT 'draft', -- draft, scheduled, publishing, published, failed
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  published_at TIMESTAMP,
+  
+  -- AI generation metadata
+  ai_model_used VARCHAR(50),
+  generation_prompt TEXT,
+  business_type VARCHAR(100),
+  content_template VARCHAR(100),
+  
+  -- Performance tracking
+  platform_results JSONB DEFAULT '[]',
+  
+  -- Video-specific data
+  video_script JSONB,
+  estimated_duration INTEGER, -- seconds
+  
+  -- Analytics
+  total_views INTEGER DEFAULT 0,
+  total_engagement INTEGER DEFAULT 0,
+  leads_generated INTEGER DEFAULT 0
+);
+
+-- Media files
+CREATE TABLE media_files (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- File info
+  filename VARCHAR(255) NOT NULL,
+  original_name VARCHAR(255),
+  file_path VARCHAR(500) NOT NULL,
+  file_type VARCHAR(100) NOT NULL,
+  file_size BIGINT,
+  
+  -- Media metadata
+  width INTEGER,
+  height INTEGER,
+  duration REAL, -- for videos in seconds
+  thumbnail_path VARCHAR(500),
+  
+  -- Usage tracking
+  used_in_posts INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Content templates (business-specific)
+CREATE TABLE content_templates (
+  id VARCHAR(100) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  category VARCHAR(100),
+  business_types VARCHAR(100)[],
+  
+  -- Template structure
+  template_structure JSONB NOT NULL,
+  ai_prompt_template TEXT,
+  
+  -- Metadata
+  estimated_engagement VARCHAR(20),
+  estimated_duration INTEGER, -- for video templates
+  difficulty_level VARCHAR(20) DEFAULT 'beginner',
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  is_active BOOLEAN DEFAULT true
+);
+
+-- Analytics tracking
+CREATE TABLE post_analytics (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  platform VARCHAR(50) NOT NULL,
+  
+  -- Engagement metrics
+  views INTEGER DEFAULT 0,
+  likes INTEGER DEFAULT 0,
+  shares INTEGER DEFAULT 0,
+  comments INTEGER DEFAULT 0,
+  clicks INTEGER DEFAULT 0,
+  saves INTEGER DEFAULT 0,
+  
+  -- Video-specific
+  watch_time_seconds REAL,
+  completion_rate REAL,
+  
+  -- Business metrics
+  leads_generated INTEGER DEFAULT 0,
+  website_clicks INTEGER DEFAULT 0,
+  phone_calls INTEGER DEFAULT 0,
+  
+  -- Metadata
+  recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  data_source VARCHAR(50) DEFAULT 'api' -- api, manual, estimated
+);
+
+-- Usage logs (for billing and optimization)
+CREATE TABLE usage_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  
+  action_type VARCHAR(50) NOT NULL, -- ai_request, post_created, video_generated, etc.
+  resource_used VARCHAR(100), -- gpt-3.5-turbo, media_upload, platform_post
+  quantity INTEGER DEFAULT 1,
+  
+  -- Cost tracking (for future billing)
+  estimated_cost_cents INTEGER DEFAULT 0,
+  
+  -- Context
+  post_id UUID REFERENCES posts(id) ON DELETE SET NULL,
+  platform VARCHAR(50),
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for performance
+CREATE INDEX idx_posts_user_id ON posts(user_id);
+CREATE INDEX idx_posts_scheduled_time ON posts(scheduled_time);
+CREATE INDEX idx_posts_status ON posts(status);
+CREATE INDEX idx_analytics_post_id ON post_analytics(post_id);
+CREATE INDEX idx_analytics_user_id ON post_analytics(user_id);
+CREATE INDEX idx_usage_logs_user_id ON usage_logs(user_id);
+CREATE INDEX idx_usage_logs_created_at ON usage_logs(created_at);
+```
+
+## 🔄 Backend API Routes & Services
+
+### Express.js API Structure
+```typescript
+// server/src/routes/index.ts
+import express from 'express';
+import authRoutes from './auth';
+import contentRoutes from './content';
+import postsRoutes from './posts';
+import platformRoutes from './platforms';
+import analyticsRoutes from './analytics';
+import mediaRoutes from './media';
+
+const router = express.Router();
+
+// API versioning
+router.use('/v1/auth', authRoutes);
+router.use('/v1/content', contentRoutes);
+router.use('/v1/posts', postsRoutes);
+router.use('/v1/platforms', platformRoutes);
+router.use('/v1/analytics', analyticsRoutes);
+router.use('/v1/media', mediaRoutes);
+
+// Health check
+router.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+export default router;
+
+// server/src/routes/content.ts - AI Content Generation Routes
+import express from 'express';
+import { authenticateToken } from '../middleware/auth';
+import { AIContentService } from '../services/AIContentService';
+import { UsageService } from '../services/UsageService';
+
+const router = express.Router();
+
+// Generate AI content
+router.post('/generate', authenticateToken, async (req, res) => {
+  try {
+    const { businessType, contentType, platforms, tone, customPrompt } = req.body;
+    const userId = req.user.id;
+
+    // Check usage limits
+    const canGenerate = await UsageService.checkAIUsageLimit(userId);
+    if (!canGenerate) {
+      return res.status(429).json({
+        error: 'Monthly AI generation limit reached',
+        upgradeRequired: true
+      });
+    }
+
+    const generatedContent = await AIContentService.generateContent({
+      businessType,
+      contentType,
+      platforms,
+      tone,
+      customPrompt
+    });
+
+    // Log usage
+    await UsageService.logAIUsage(userId, 'content_generation', 1);
+
+    res.json({
+      success: true,
+      content: generatedContent,
+      remainingGenerations: await UsageService.getRemainingAIUsage(userId)
+    });
+
+  } catch (error) {
+    console.error('Content generation error:', error);
+    res.status(500).json({
+      error: 'Failed to generate content',
+      message: error.message
+    });
+  }
+});
+
+// Generate faceless video script
+router.post('/generate-video-script', authenticateToken, async (req, res) => {
+  try {
+    const { businessType, topic, duration, customRequirements } = req.body;
+    const userId = req.user.id;
+
+    const canGenerate = await UsageService.checkAIUsageLimit(userId);
+    if (!canGenerate) {
+      return res.status(429).json({
+        error: 'Monthly AI generation limit reached'
+      });
+    }
+
+    const videoScript = await AIContentService.generateFacelessVideoScript(
+      businessType,
+      topic,
+      duration,
+      customRequirements
+    );
+
+    await UsageService.logAIUsage(userId, 'video_script_generation', 1);
+
+    res.json({
+      success: true,
+      script: videoScript
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to generate video script',
+      message: error.message
+    });
+  }
+});
+
+// Get content templates
+router.get('/templates', authenticateToken, async (req, res) => {
+  try {
+    const { businessType, contentType } = req.query;
+    
+    const templates = await db.content_templates.findMany({
+      where: {
+        is_active: true,
+        ...(businessType && { 
+          business_types: { 
+            has: businessType 
+          } 
+        })
+      },
+      orderBy: {
+        name: 'asc'
+      }
+    });
+
+    res.json({
+      success: true,
+      templates
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to fetch templates'
+    });
+  }
+});
+
+// Optimize content for specific platform
+router.post('/optimize/:platform', authenticateToken, async (req, res) => {
+  try {
+    const { platform } = req.params;
+    const { content } = req.body;
+    const userId = req.user.id;
+
+    const optimizedContent = await AIContentService.optimizeForPlatform(content, platform);
+
+    await UsageService.logAIUsage(userId, 'content_optimization', 1);
+
+    res.json({
+      success: true,
+      optimizedContent
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to optimize content'
+    });
+  }
+});
+
+export default router;
+
+// server/src/routes/posts.ts - Posts Management
+import express from 'express';
+import { authenticateToken } from '../middleware/auth';
+import { PostService } from '../services/PostService';
+import { SchedulingService } from '../services/SchedulingService';
+
+const router = express.Router();
+
+// Get user's posts with filtering and pagination
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { 
+      status, 
+      platform, 
+      startDate, 
+      endDate, 
+      page = 1, 
+      limit = 20,
+      contentType 
+    } = req.query;
+
+    const posts = await PostService.getUserPosts(userId, {
+      status,
+      platform,
+      startDate,
+      endDate,
+      page: parseInt(page as string),
+      limit: parseInt(limit as string),
+      contentType
+    });
+
+    res.json({
+      success: true,
+      posts: posts.data,
+      pagination: posts.pagination
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to fetch posts'
+    });
+  }
+});
+
+// Create new post
+router.post('/', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const postData = { ...req.body, user_id: userId };
+
+    const post = await PostService.createPost(postData);
+
+    // If scheduled for future, add to scheduling queue
+    if (new Date(post.scheduled_time) > new Date()) {
+      await SchedulingService.schedulePost(post);
+    }
+
+    res.status(201).json({
+      success: true,
+      post
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to create post',
+      message: error.message
+    });
+  }
+});
+
+// Get specific post
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const post = await PostService.getPost(id, userId);
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      post
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to fetch post'
+    });
+  }
+});
+
+// Update post
+router.put('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updateData = req.body;
+
+    const post = await PostService.updatePost(id, userId, updateData);
+
+    res.json({
+      success: true,
+      post
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to update post'
+    });
+  }
+});
+
+// Delete post
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    await PostService.deletePost(id, userId);
+
+    res.json({
+      success: true,
+      message: 'Post deleted successfully'
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to delete post'
+    });
+  }
+});
+
+// Publish post immediately
+router.post('/:id/publish', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const result = await PostService.publishPostNow(id, userId);
+
+    res.json({
+      success: true,
+      result
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to publish post',
+      message: error.message
+    });
+  }
+});
+
+// Duplicate post
+router.post('/:id/duplicate', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const duplicatedPost = await PostService.duplicatePost(id, userId);
+
+    res.json({
+      success: true,
+      post: duplicatedPost
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to duplicate post'
+    });
+  }
+});
+
+export default router;
+```
+
+## ⚙️ Core Services Implementation
+
+### Scheduling Service (Automated Posting)
+```typescript
+// server/src/services/SchedulingService.ts
+import cron from 'node-cron';
+import { PlatformService } from './PlatformService';
+import { NotificationService } from './NotificationService';
+
+interface ScheduledPost {
+  id: string;
+  user_id: string;
+  content: string;
+  media_urls: string[];
+  target_platforms: string[];
+  scheduled_time: Date;
+  status: string;
+  user: {
+    platform_connections: PlatformConnection[];
+  };
+}
+
+class SchedulingService {
+  private static isRunning = false;
+
+  static async initializeScheduler(): Promise<void> {
+    // Check for posts to publish every 2 minutes
+    cron.schedule('*/2 * * * *', async () => {
+      if (!this.isRunning) {
+        this.isRunning = true;
+        await this.processScheduledPosts();
+        this.isRunning = false;
+      }
+    });
+
+    console.log('📅 Scheduling service initialized');
+  }
+
+  static async processScheduledPosts(): Promise<void> {
+    try {
+      const postsToPublish = await db.posts.findMany({
+        where: {
+          status: 'scheduled',
+          scheduled_time: {
+            lte: new Date()
+          }
+        },
+        include: {
+          user: {
+            include: {
+              platform_connections: {
+                where: {
+                  is_active: true
+                }
+              }
+            }
+          }
+        },
+        take: 10 // Process max 10 posts at a time
+      });
+
+      console.log(`📤 Processing ${postsToPublish.length} scheduled posts`);
+
+      for (const post of postsToPublish) {
+        await this.publishPost(post);
+        
+        // Small delay between posts to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+    } catch (error) {
+      console.error('❌ Error processing scheduled posts:', error);
+    }
+  }
+
+  private static async publishPost(post: ScheduledPost): Promise<void> {
+    try {
+      // Update status to publishing
+      await db.posts.update({
+        where: { id: post.id },
+        data: { 
+          status: 'publishing',
+          updated_at: new Date()
+        }
+      });
+
+      // Get platform-specific content versions
+      const contentVersions = await this.getContentVersions(post);
+
+      // Publish to each platform
+      const results = await PlatformService.postToMultiplePlatforms(
+        contentVersions,
+        post.media_urls,
+        post.target_platforms,
+        post.user.platform_connections
+      );
+
+      // Determine overall success
+      const hasSuccess = Object.values(results).some(r => r.success);
+      const allSuccess = Object.values(results).every(r => r.success);
+
+      const finalStatus = allSuccess ? 'published' : hasSuccess ? 'partial_success' : 'failed';
+
+      // Update post with results
+      await db.posts.update({
+        where: { id: post.id },
+        data: {
+          status: finalStatus,
+          published_at: new Date(),
+          platform_results: results,
+          updated_at: new Date()
+        }
+      });
+
+      // Log usage for successful posts
+      for (const [platform, result] of Object.entries(results)) {
+        if (result.success) {
+          await UsageService.logUsage(post.user_id, 'post_published', platform, 1);
+        }
+      }
+
+      // Send notification to user
+      await NotificationService.sendPostPublishedNotification(
+        post.user_id,
+        post.id,
+        finalStatus,
+        results
+      );
+
+      console.log(`✅ Post ${post.id} published with status: ${finalStatus}`);
+
+    } catch (error) {
+      console.error(`❌ Failed to publish post ${post.id}:`, error);
+
+      // Mark as failed
+      await db.posts.update({
+        where: { id: post.id },
+        data: {
+          status: 'failed',
+          platform_results: {
+            error: error.message,
+            timestamp: new Date()
+          },
+          updated_at: new Date()
+        }
+      });
+
+      // Notify user of failure
+      await NotificationService.sendPostFailedNotification(
+        post.user_id,
+        post.id,
+        error.message
+      );
+    }
+  }
+
+  private static async getContentVersions(post: ScheduledPost): Promise<Record<string, string>> {
+    // If post has platform-specific versions, use those
+    if (post.platform_results && typeof post.platform_results === 'object') {
+      const savedVersions = post.platform_results as any;
+      if (savedVersions.contentVersions) {
+        return savedVersions.contentVersions;
+      }
+    }
+
+    // Otherwise, use the main content for all platforms
+    const versions: Record<string, string> = {};
+    for (const platform of post.target_platforms) {
+      versions[platform] = post.content;
+    }
+
+    return versions;
+  }
+
+  static async schedulePost(post: any): Promise<void> {
+    // Additional validation and setup for scheduled posts
+    console.log(`📅 Scheduled post ${post.id} for ${post.scheduled_time}`);
+  }
+
+  static async reschedulePost(postId: string, newTime: Date): Promise<void> {
+    await db.posts.update({
+      where: { id: postId },
+      data: {
+        scheduled_time: newTime,
+        status: 'scheduled',
+        updated_at: new Date()
+      }
+    });
+  }
+
+  static async cancelScheduledPost(postId: string): Promise<void> {
+    await db.posts.update({
+      where: { id: postId },
+      data: {
+        status: 'cancelled',
+        updated_at: new Date()
+      }
+    });
+  }
+}
+
+export { SchedulingService };
+```
+
+### Usage Tracking Service (For Future Billing)
+```typescript
+// server/src/services/UsageService.ts
+interface UsageLimits {
+  free: {
+    monthlyPosts: 50;
+    monthlyAIRequests: 100;
+    platforms: 3;
+    mediaStorageGB: 1;
+  };
+  pro: {
+    monthlyPosts: 500;
+    monthlyAIRequests: 1000;
+    platforms: 10;
+    mediaStorageGB: 10;
+  };
+  enterprise: {
+    monthlyPosts: -1; // unlimited
+    monthlyAIRequests: -1;
+    platforms: -1;
+    mediaStorageGB: 100;
+  };
+}
+
+class UsageService {
+  static async checkAIUsageLimit(userId: string): Promise<boolean> {
+    const user = await db.users.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) return false;
+
+    const limits = USAGE_LIMITS[user.subscription_tier] || USAGE_LIMITS.free;
+    
+    // Unlimited for certain tiers
+    if (limits.monthlyAIRequests === -1) return true;
+
+    return user.monthly_ai_requests < limits.monthlyAIRequests;
+  }
+
+  static async checkPostLimit(userId: string): Promise<boolean> {
+    const user = await db.users.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) return false;
+
+    const limits = USAGE_LIMITS[user.subscription_tier] || USAGE_LIMITS.free;
+    
+    if (limits.monthlyPosts === -1) return true;
+
+    return user.monthly_posts_count < limits.monthlyPosts;
+  }
+
+  static async logAIUsage(userId: string, actionType: string, quantity: number = 1): Promise<void> {
+    // Log the usage
+    await db.usage_logs.create({
+      data: {
+        user_id: userId,
+        action_type: actionType,
+        resource_used: 'gpt-3.5-turbo',
+        quantity,
+        estimated_cost_cents: this.calculateAICost(quantity)
+      }
+    });
+
+    // Update user's monthly count
+    await db.users.update({
+      where: { id: userId },
+      data: {
+        monthly_ai_requests: {
+          increment: quantity
+        }
+      }
+    });
+  }
+
+  static async logUsage(
+    userId: string, 
+    actionType: string, 
+    platform?: string, 
+    quantity: number = 1
+  ): Promise<void> {
+    await db.usage_logs.create({
+      data: {
+        user_id: userId,
+        action_type: actionType,
+        platform,
+        quantity,
+        estimated_cost_cents: this.calculateActionCost(actionType, platform, quantity)
+      }
+    });
+
+    // Update relevant counters
+    if (actionType === 'post_created' || actionType === 'post_published') {
+      await db.users.update({
+        where: { id: userId },
+        data: {
+          monthly_posts_count: {
+            increment: quantity
+          }
+        }
+      });
+    }
+  }
+
+  static async getRemainingAIUsage(userId: string): Promise<number> {
+    const user = await db.users.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) return 0;
+
+    const limits = USAGE_LIMITS[user.subscription_tier] || USAGE_LIMITS.free;
+    
+    if (limits.monthlyAIRequests === -1) return -1; // unlimited
+
+    return Math.max(0, limits.monthlyAIRequests - user.monthly_ai_requests);
+  }
+
+  static async resetMonthlyUsage(): Promise<void> {
+    // Reset monthly counters (run via cron job monthly)
+    await db.users.updateMany({
+      where: {
+        last_usage_reset: {
+          lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago
+        }
+      },
+      data: {
+        monthly_posts_count: 0,
+        monthly_ai_requests: 0,
+        last_usage_reset: new Date()
+      }
+    });
+  }
+
+  private static calculateAICost(requests: number): number {
+    // Rough estimate: $0.002 per 1K tokens, assume avg 500 tokens per request
+    return Math.round(requests * 0.001 * 100); // Convert to cents
+  }
+
+  private static calculateActionCost(actionType: string, platform?: string, quantity: number = 1): number {
+    const costs = {
+      post_published: 0, // Free for now
+      media_upload: 1,   // 1 cent per MB (rough estimate)
+      ai_request: 1      // 1 cent per request
+    };
+
+    return (costs[actionType] || 0) * quantity;
+  }
+}
+
+export { UsageService };
+```
+
+## 📱 Frontend Components & Pages
+
+### Main Application Shell
+```tsx
+// client/src/App.tsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Toaster } from 'react-hot-toast';
+
+// Pages
+import Dashboard from './pages/Dashboard';
+import ContentCreator from './pages/ContentCreator';
+import Calendar from './pages/Calendar';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+import Login from './pages/Login';
+import Register from './pages/Register';
+
+// Components
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/layout/Header';
+import LoadingSpinner from './components/ui/LoadingSpinner';
+
+// Styles
+import './index.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
+
+function AppShell() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <Sidebar />
+      
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header />
+        
+        <main className="flex-1 p-6 overflow-auto">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/create" element={<ContentCreator />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <AppShell />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+            }}
+          />
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
+```
+
+### Enhanced Content Creator Component
+```tsx
+// client/src/pages/ContentCreator.tsx
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
+
+// Components
+import ProgressSteps from '../components/ui/ProgressSteps';
+import BusinessTypeSelector from '../components/content/BusinessTypeSelector';
+import ContentTypeSelector from '../components/content/ContentTypeSelector';
+import PlatformSelector from '../components/content/PlatformSelector';
+import ContentCustomizer from '../components/content/ContentCustomizer';
+import AIContentGenerator from '../components/content/AIContentGenerator';
+import ContentEditor from '../components/content/ContentEditor';
+import SchedulingOptions from '../components/content/SchedulingOptions';
+
+import { generateContent, savePost } from '../services/api';
+
+interface ContentData {
+  businessType: string;
+  contentType: string;
+  platforms: string[];
+  tone: string;
+  customPrompt: string;
+  targetAudience: string;
+  generatedContent?: any;
+  scheduledTime?: Date;
+}
+
+const ContentCreator: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [step, setStep] = useState(1);
+  const [contentData, setContentData] = useState<ContentData>({
+    businessType: '',
+    contentType: '',
+    platforms: [],
+    tone: 'professional',
+    customPrompt: '',
+    targetAudience: ''
+  });
+
+  // Pre-fill data from navigation state (e.g., from quick actions)
+  useEffect(() => {
+    if (location.state) {
+      const { type, scheduledDate, businessType } = location.state;
+      setContentData(prev => ({
+        ...prev,
+        ...(type && { contentType: type }),
+        ...(scheduledDate && { scheduledTime: new Date(scheduledDate) }),
+        ...(businessType && { businessType })
+      }));
+    }
+  }, [location.state]);
+
+  const generateContentMutation = useMutation({
+    mutationFn: generateContent,
+    onSuccess: (data) => {
+      setContentData(prev => ({
+        ...prev,
+        generatedContent: data.content
+      }));
+      setStep(6); // Move to editor
+      toast.success('Content generated successfully!');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to generate content');
+    }
+  });
+
+  const savePostMutation = useMutation({
+    mutationFn: savePost,
+    onSuccess: () => {
+      toast.success('Post saved successfully!');
+      navigate('/calendar');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to save post');
+    }
+  });
+
+  const handleStepChange = (newStep: number) => {
+    setStep(newStep);
+  };
+
+  const handleGenerateContent = () => {
+    generateContentMutation.mutate({
+      businessType: contentData.businessType,
+      contentType: contentData.contentType,
+      platforms: contentData.platforms,
+      tone: contentData.tone,
+      customPrompt: contentData.customPrompt,
+      targetAudience: contentData.targetAudience
+    });
+  };
+
+  const handleSavePost = (finalContent: any, schedulingOptions: any) => {
+    savePostMutation.mutate({
+      ...finalContent,
+      ...schedulingOptions,
+      target_platforms: contentData.platforms,
+      content_type: contentData.contentType,
+      business_type: contentData.businessType
+    });
+  };
+
+  const steps = [
+    'Business Type',
+    'Content Type', 
+    'Platforms',
+    'Customize',
+    'Generate',
+    'Edit',
+    'Schedule'
+  ];
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Content</h1>
+        <p className="text-gray-600">Let AI help you create engaging social media content</p>
+      </div>
+
+      {/* Progress Indicator */}
+      <div className="mb-8">
+        <ProgressSteps 
+          steps={steps}
+          currentStep={step}
+          onStepClick={handleStepChange}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        {step === 1 && (
+          <BusinessTypeSelector
+            title="What's your business?"
+            subtitle="We'll customize content templates for your industry"
+            selected={contentData.businessType}
+            onSelect={(type) => {
+              setContentData(prev => ({ ...prev, businessType: type }));
+              setStep(2);
+            }}
+          />
+        )}
+
+        {step === 2 && (
+          <ContentTypeSelector
+            title="What type of content do you want to create?"
+            subtitle="Choose the format that best fits your goals"
+            businessType={contentData.businessType}
+            selected={contentData.contentType}
+            onSelect={(type) => {
+              setContentData(prev => ({ ...prev, contentType: type }));
+              setStep(3);
+            }}
+            onBack={() => setStep(1)}
+          />
+        )}
+
+        {step === 3 && (
+          <PlatformSelector
+            title="Where do you want to post?"
+            subtitle="Select your target social media platforms"
+            selected={contentData.platforms}
+            onSelect={(platforms) => {
+              setContentData(prev => ({ ...prev, platforms }));
+              setStep(4);
+            }}
+            onBack={() => setStep(2)}
+          />
+        )}
+
+        {step === 4 && (
+          <ContentCustomizer
+            title="Customize your content"
+            subtitle="Fine-tune the tone and messaging"
+            businessType={contentData.businessType}
+            contentType={contentData.contentType}
+            data={contentData}
+            onChange={(updates) => {
+              setContentData(prev => ({ ...prev, ...updates }));
+            }}
+            onNext={() => setStep(5)}
+            onBack={() => setStep(3)}
+          />
+        )}
+
+        {step === 5 && (
+          <AIContentGenerator
+            title="Generate your content"
+            subtitle="AI will create engaging content based on your preferences"
+            contentData={contentData}
+            isGenerating={generateContentMutation.isPending}
+            onGenerate={handleGenerateContent}
+            onBack={() => setStep(4)}
+          />
+        )}
+
+        {step === 6 && contentData.generatedContent && (
+          <ContentEditor
+            title="Edit your content"
+            subtitle="Review and refine the generated content"
+            generatedContent={contentData.generatedContent}
+            platforms={contentData.platforms}
+            onNext={(editedContent) => {
+              setContentData(prev => ({ 
+                ...prev, 
+                generatedContent: editedContent 
+              }));
+              setStep(7);
+            }}
+            onBack={() => setStep(5)}
+            onRegenerate={() => setStep(5)}
+          />
+        )}
+
+        {step === 7 && (
+          <SchedulingOptions
+            title="Schedule your post"
+            subtitle="Choose when to publish your content"
+            content={contentData.generatedContent}
+            platforms={contentData.platforms}
+            defaultDate={contentData.scheduledTime}
+            onSchedule={handleSavePost}
+            onBack={() => setStep(6)}
+            isSaving={savePostMutation.isPending}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ContentCreator;
+```
+
+## 🎨 UI Components Library
+
+### Business Type Selector Component
+```tsx
+// client/src/components/content/BusinessTypeSelector.tsx
+import React from 'react';
+import { motion } from 'framer-motion';
+
+interface BusinessType {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  examples: string[];
+}
+
+interface Props {
+  title: string;
+  subtitle: string;
+  selected: string;
+  onSelect: (type: string) => void;
+}
+
+const businessTypes: BusinessType[] = [
+  {
+    id: 'roofing',
+    name: 'Roofing & Construction',
+    icon: '🏠',
+    description: 'Roofing contractors, construction companies, home improvement',
+    examples: ['Storm damage repair', 'Roof inspections', 'New installations']
+  },
+  {
+    id: 'realestate',
+    name: 'Real Estate',
+    icon: '🏡',
+    description: 'Real estate agents, property managers, home buyers/sellers',
+    examples: ['Market updates', 'Property showcases', 'Buying tips']
+  },
+  {
+    id: 'fitness',
+    name: 'Fitness & Health',
+    icon: '💪',
+    description: 'Gyms, personal trainers, wellness coaches',
+    examples: ['Workout tips', 'Nutrition advice', 'Success stories']
+  },
+  {
+    id: 'restaurant',
+    name: 'Restaurant & Food',
+    icon: '🍕',
+    description: 'Restaurants, cafes, food delivery, catering',
+    examples: ['Daily specials', 'Behind the scenes', 'Customer favorites']
+  },
+  {
+    id: 'automotive',
+    name: 'Automotive',
+    icon: '🚗',
+    description: 'Auto repair, car dealerships, automotive services',
+    examples: ['Maintenance tips', 'New arrivals', 'Service promotions']
+  },
+  {
+    id: 'professional',
+    name: 'Professional Services',
+    icon: '💼',
+    description: 'Lawyers, accountants, consultants, agencies',
+    examples: ['Industry insights', 'Expert advice', 'Case studies']
+  },
+  {
+    id: 'retail',
+    name: 'Retail & E-commerce',
+    icon: '🛍️',
+    description: 'Online stores, retail shops, product businesses',
+    examples: ['Product features', 'Customer reviews', 'Sales promotions']
+  },
+  {
+    id: 'general',
+    name: 'General Business',
+    icon: '🌟',
+    description: 'Any other business type or mixed industries',
+    examples: ['Company updates', 'Industry news', 'Customer stories']
+  }
+];
+
+const BusinessTypeSelector: React.FC<Props> = ({ title, subtitle, selected, onSelect }) => {
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
+        <p className="text-gray-600">{subtitle}</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {businessTypes.map((type) => (
+          <motion.button
+            key={type.id}
+            className={`p-6 rounded-xl border-2 text-left transition-all duration-200 hover:shadow-md ${
+              selected === type.id
+                ? 'border-primary-500 bg-primary-50 shadow-md'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+            onClick={() => onSelect(type.id)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="flex items-start space-x-4">
+              <div className="text-3xl">{type.icon}</div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900 mb-1">{type.name}</h3>
+                <p className="text-sm text-gray-600 mb-3">{type.description}</p>
+                <div className="flex flex-wrap gap-1">
+                  {type.examples.map((example, index) => (
+                    <span
+                      key={index}
+                      className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
+                    >
+                      {example}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default BusinessTypeSelector;
+```
+
+### Content Type Selector Component
+```tsx
+// client/src/components/content/ContentTypeSelector.tsx
+import React from 'react';
+import { motion } from 'framer-motion';
+
+interface ContentType {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  duration: string;
+  difficulty: 'Easy' | 'Medium' | 'Advanced';
+  examples: string[];
+  bestFor: string[];
+}
+
+interface Props {
+  title: string;
+  subtitle: string;
+  businessType: string;
+  selected: string;
+  onSelect: (type: string) => void;
+  onBack: () => void;
+}
+
+const getContentTypes = (businessType: string): ContentType[] => {
+  const baseTypes: ContentType[] = [
+    {
+      id: 'social_post',
+      name: 'Social Media Post',
+      description: 'Text-based posts with engaging copy and hashtags',
+      icon: '📝',
+      duration: '2-3 min',
+      difficulty: 'Easy',
+      examples: ['Tips and advice', 'Behind the scenes', 'Company updates'],
+      bestFor: ['Quick engagement', 'Daily posting', 'Brand awareness']
+    },
+    {
+      id: 'faceless_video',
+      name: 'Faceless Video Script',
+      description: 'Video scripts with visual cues for camera-free content',
+      icon: '🎬',
+      duration: '5-8 min',
+      difficulty: 'Medium',
+      examples: ['How-to tutorials', 'Before/after reveals', 'Educational content'],
+      bestFor: ['Authority building', 'High engagement', 'YouTube Shorts']
+    },
+    {
+      id: 'before_after',
+      name: 'Before/After Showcase',
+      description: 'Highlight transformations and results',
+      icon: '🔄',
+      duration: '3-4 min',
+      difficulty: 'Easy',
+      examples: ['Project transformations', 'Client results', 'Progress updates'],
+      bestFor: ['Trust building', 'Social proof', 'Lead generation']
+    },
+    {
+      id: 'educational_tips',
+      name: 'Educational Tips',
+      description: 'Share expertise and build industry authority',
+      icon: '🎓',
+      duration: '4-5 min',
+      difficulty: 'Medium',
+      examples: ['Industry insights', 'Pro tips', 'Common mistakes'],
+      bestFor: ['Thought leadership', 'Expert positioning', 'Value-driven content']
+    },
+    {
+      id: 'promotional',
+      name: 'Promotional Content',
+      description: 'Sales-focused posts that drive conversions',
+      icon: '📢',
+      duration: '3-4 min',
+      difficulty: 'Easy',
+      examples: ['Special offers', 'New services', 'Limited time deals'],
+      bestFor: ['Direct sales', 'Conversions', 'Revenue generation']
+    },
+    {
+      id: 'customer_story',
+      name: 'Customer Success Story',
+      description: 'Testimonials and case studies that build trust',
+      icon: '⭐',
+      duration: '4-6 min',
+      difficulty: 'Medium',
+      examples: ['Client testimonials', 'Success stories', 'Review highlights'],
+      bestFor: ['Social proof', 'Trust building', 'Credibility']
+    }
+  ];
+
+  // Customize based on business type
+  if (businessType === 'roofing') {
+    baseTypes.forEach(type => {
+      if (type.id === 'before_after') {
+        type.examples = ['Roof transformations', 'Storm damage repairs', 'Installation progress'];
+      } else if (type.id === 'educational_tips') {
+        type.examples = ['Roof maintenance', 'Storm preparation', 'Material selection'];
+      }
+    });
+  }
+
+  return baseTypes;
+};
+
+const ContentTypeSelector: React.FC<Props> = ({ 
+  title, 
+  subtitle, 
+  businessType, 
+  selected, 
+  onSelect, 
+  onBack 
+}) => {
+  const contentTypes = getContentTypes(businessType);
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Easy': return 'text-green-600 bg-green-100';
+      case 'Medium': return 'text-yellow-600 bg-yellow-100';
+      case 'Advanced': return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={onBack}
+          className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+        >
+          ← Back
+        </button>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+          <p className="text-gray-600">{subtitle}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {contentTypes.map((type) => (
+          <motion.button
+            key={type.id}
+            className={`p-6 rounded-xl border-2 text-left transition-all duration-200 hover:shadow-lg ${
+              selected === type.id
+                ? 'border-primary-500 bg-primary-50 shadow-lg'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+            onClick={() => onSelect(type.id)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="text-3xl">{type.icon}</div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{type.name}</h3>
+                    <p className="text-sm text-gray-600">{type.duration}</p>
+                  </div>
+                </div>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(type.difficulty)}`}>
+                  {type.difficulty}
+                </span>
+              </div>
+
+              {/* Description */}
+              <p className="text-gray-700">{type.description}</p>
+
+              {/* Examples */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Examples:</h4>
+                <div className="flex flex-wrap gap-1">
+                  {type.examples.map((example, index) => (
+                    <span
+                      key={index}
+                      className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded"
+                    >
+                      {example}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Best For */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Best for:</h4>
+                <div className="flex flex-wrap gap-1">
+                  {type.bestFor.map((item, index) => (
+                    <span
+                      key={index}
+                      className="inline-block px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ContentTypeSelector;
+```
+
+## 🚀 Deployment & Environment Setup
+
+### Package.json Configuration
+```json
+{
+  "name": "social-media-ai-platform",
+  "version": "1.0.0",
+  "description": "AI-powered social media management platform",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    
+    "start": "cd server && npm start",
+    "start:prod": "cd server && npm run start:prod",
+    
+    "db:migrate": "cd server && npx prisma migrate dev",
+    "db:generate": "cd server && npx prisma generate",
+    "db:seed": "cd server && npx prisma db seed",
+    "db:reset": "cd server && npx prisma migrate reset",
+    
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd server && npm run test",
+    "test:client": "cd client && npm run test",
+    
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit",
+    
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}
+```
+
+### Environment Configuration Files
+```bash
+# .env.example (copy to .env for development)
+# Server Configuration
+NODE_ENV=development
+PORT=3001
+HOST=localhost
+
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/social_media_platform"
+
+# Authentication
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRES_IN=7d
+BCRYPT_ROUNDS=12
+
+# AI Services
+OPENAI_API_KEY=your-openai-api-key-here
+OPENAI_MODEL=gpt-3.5-turbo
+
+# Social Media Platform APIs
+# Facebook/Instagram (Meta)
+FACEBOOK_APP_ID=your-facebook-app-id
+FACEBOOK_APP_SECRET=your-facebook-app-secret
+FACEBOOK_REDIRECT_URI=http://localhost:3001/api/v1/auth/facebook/callback
+
+# Google (YouTube)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:3001/api/v1/auth/google/callback
+
+# File Storage
+UPLOAD_DIR=./uploads
+MAX_FILE_SIZE=50MB
+ALLOWED_FILE_TYPES=image/jpeg,image/png,image/gif,video/mp4,video/mov
+
+# Application Settings
+CORS_ORIGIN=http://localhost:3000
+SESSION_SECRET=your-session-secret
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# Features (enable/disable for testing)
+ENABLE_AI_GENERATION=true
+ENABLE_VIDEO_PROCESSING=true
+ENABLE_SCHEDULING=true
+ENABLE_ANALYTICS=true
+
+# Logging
+LOG_LEVEL=info
+LOG_FILE=./logs/app.log
+
+# Development Tools
+ENABLE_CORS=true
+ENABLE_REQUEST_LOGGING=true
+```
+
+### Docker Configuration (Optional)
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /app
+COPY package*.json ./
+COPY client/package*.json ./client/
+COPY server/package*.json ./server/
+RUN npm ci
+
+# Build the application
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build client
+WORKDIR /app/client
+RUN npm run build
+
+# Build server
+WORKDIR /app/server
+RUN npm run build
+
+# Production image
+FROM base AS runner
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy built application
+COPY --from=builder --chown=nextjs:nodejs /app/server/dist ./server/dist
+COPY --from=builder --chown=nextjs:nodejs /app/client/dist ./client/dist
+COPY --from=builder /app/server/package*.json ./server/
+COPY --from=builder /app/server/node_modules ./server/node_modules
+
+USER nextjs
+
+EXPOSE 3001
+
+CMD ["node", "server/dist/index.js"]
+```
+
+## 📈 Success Metrics & Analytics Dashboard
+
+### Analytics Service Implementation
+```typescript
+// server/src/services/AnalyticsService.ts
+interface DashboardMetrics {
+  postsThisMonth: number;
+  totalReach: number;
+  avgEngagementRate: number;
+  scheduledPosts: number;
+  topPerformingPosts: any[];
+  platformBreakdown: Record<string, any>;
+  recentActivity: any[];
+  usageStats: any;
+}
+
+class AnalyticsService {
+  static async getDashboardMetrics(userId: string): Promise<DashboardMetrics> {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    // Parallel queries for better performance
+    const [
+      postsThisMonth,
+      totalReach,
+      avgEngagement,
+      scheduledPosts,
+      topPosts,
+      platformStats,
+      recentActivity,
+      usageStats
+    ] = await Promise.all([
+      this.getPostsThisMonth(userId, startOfMonth),
+      this.getTotalReach(userId),
+      this.getAverageEngagement(userId),
+      this.getScheduledPostsCount(userId),
+      this.getTopPerformingPosts(userId, 5),
+      this.getPlatformBreakdown(userId),
+      this.getRecentActivity(userId, 10),
+      this.getUsageStats(userId)
+    ]);
+
+    return {
+      postsThisMonth,
+      totalReach,
+      avgEngagementRate: avgEngagement,
+      scheduledPosts,
+      topPerformingPosts: topPosts,
+      platformBreakdown: platformStats,
+      recentActivity,
+      usageStats
+    };
+  }
+
+  private static async getPostsThisMonth(userId: string, startOfMonth: Date): Promise<number> {
+    return await db.posts.count({
+      where: {
+        user_id: userId,
+        status: 'published',
+        published_at: {
+          gte: startOfMonth
+        }
+      }
+    });
+  }
+
+  private static async getTotalReach(userId: string): Promise<number> {
+    const result = await db.post_analytics.aggregate({
+      where: {
+        user_id: userId
+      },
+      _sum: {
+        views: true
+      }
+    });
+    
+    return result._sum.views || 0;
+  }
+
+  static async getPostPerformance(postId: string, userId: string): Promise<any> {
+    const post = await db.posts.findFirst({
+      where: {
+        id: postId,
+        user_id: userId
+      },
+      include: {
+        analytics: true
+      }
+    });
+
+    if (!post) return null;
+
+    // Aggregate analytics across platforms
+    const totalViews = post.analytics.reduce((sum, a) => sum + a.views, 0);
+    const totalEngagement = post.analytics.reduce((sum, a) => 
+      sum + a.likes + a.shares + a.comments, 0
+    );
+    
+    const engagementRate = totalViews > 0 ? (totalEngagement / totalViews) * 100 : 0;
+
+    return {
+      post,
+      metrics: {
+        totalViews,
+        totalEngagement,
+        engagementRate: Math.round(engagementRate * 100) / 100,
+        platformBreakdown: post.analytics.map(a => ({
+          platform: a.platform,
+          views: a.views,
+          engagement: a.likes + a.shares + a.comments,
+          engagementRate: a.views > 0 ? ((a.likes + a.shares + a.comments) / a.views) * 100 : 0
+        }))
+      }
+    };
+  }
+
+  static async trackPostEngagement(
+    postId: string,
+    platform: string,
+    metrics: {
+      views?: number;
+      likes?: number;
+      shares?: number;
+      comments?: number;
+      clicks?: number;
+    }
+  ): Promise<void> {
+    // Update or create analytics record
+    await db.post_analytics.upsert({
+      where: {
+        post_id_platform: {
+          post_id: postId,
+          platform: platform
+        }
+      },
+      update: {
+        ...metrics,
+        recorded_at: new Date()
+      },
+      create: {
+        post_id: postId,
+        platform: platform,
+        ...metrics,
+        recorded_at: new Date()
+      }
+    });
+
+    // Update post totals
+    const postAnalytics = await db.post_analytics.findMany({
+      where: { post_id: postId }
+    });
+
+    const totalViews = postAnalytics.reduce((sum, a) => sum + a.views, 0);
+    const totalEngagement = postAnalytics.reduce((sum, a) => 
+      sum + a.likes + a.shares + a.comments, 0
+    );
+
+    await db.posts.update({
+      where: { id: postId },
+      data: {
+        total_views: totalViews,
+        total_engagement: totalEngagement
+      }
+    });
+  }
+}
+
+export { AnalyticsService };
+```
+
+## 🎯 Implementation Roadmap
+
+### Phase 1: Core MVP (Weeks 1-4)
+**Week 1-2: Foundation**
+- Set up project structure and development environment
+- Implement authentication system (JWT)
+- Create database schema and basic models
+- Build core UI components and layout
+
+**Week 3-4: Content Creation**
+- Implement AI content generation service
+- Build content creation flow (steps 1-5)
+- Create basic content editor
+- Set up OpenAI integration
+
+### Phase 2: Platform Integration (Weeks 5-6)
+**Week 5: Social Media APIs**
+- Implement Facebook/Instagram posting
+- Add YouTube video upload capability
+- Create platform connection management
+
+**Week 6: Scheduling System**
+- Build scheduling engine with cron jobs
+- Implement content calendar
+- Add post status tracking
+
+### Phase 3: Enhancement & Polish (Weeks 7-8)
+**Week 7: Analytics & Optimization**
+- Build analytics dashboard
+- Implement performance tracking
+- Add usage monitoring for future billing
+
+**Week 8: Testing & Deployment**
+- Comprehensive testing
+- Performance optimization
+- Deploy to production
+- User acceptance testing
+
+### Phase 4: Advanced Features (Future)
+- Advanced video editing tools
+- Team collaboration features
+- White-label options for agencies
+- Advanced analytics and reporting
+- Mobile app development
+
+## 💡 Business Model & Monetization Strategy
+
+### Subscription Tiers (Future SaaS)
+```typescript
+const SUBSCRIPTION_PLANS = {
+  free: {
+    name: 'Free',
+    price: 0,
+    features: {
+      monthlyPosts: 20,
+      aiGenerations: 50,
+      platforms: 3,
+      scheduling: true,
+      basicAnalytics: true,
+      support: 'Community'
+    }
+  },
+  
+  pro: {
+    name: 'Professional',
+    price: 29,
+    features: {
+      monthlyPosts: 200,
+      aiGenerations: 500,
+      platforms: 10,
+      scheduling: true,
+      advancedAnalytics: true,
+      teamAccounts: 3,
+      prioritySupport: true,
+      customBranding: true
+    }
+  },
+  
+  business: {
+    name: 'Business',
+    price: 79,
+    features: {
+      monthlyPosts: 1000,
+      aiGenerations: 2000,
+      platforms: 'unlimited',
+      scheduling: true,
+      advancedAnalytics: true,
+      teamAccounts: 10,
+      whiteLabel: true,
+      apiAccess: true,
+      dedicatedSupport: true
+    }
+  }
+};
+```
+
+## 🚀 Getting Started Instructions
+
+### Quick Start (Copy this to Replit)
+
+1. **Clone and Setup:**
+```bash
+# In Replit terminal
+npm run install:all
+```
+
+2. **Environment Setup:**
+```bash
+# Copy environment template
+cp .env.example .env
+# Edit .env with your API keys
+```
+
+3. **Database Setup:**
+```bash
+# Run database migrations
+npm run db:migrate
+# Seed with sample data
+npm run db:seed
+```
+
+4. **Start Development:**
+```bash
+# Start both client and server
+npm run dev
+```
+
+5. **Access Application:**
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:3001/api/v1`
+
+### Required API Keys:
+- **OpenAI API Key** (for AI content generation)
+- **Facebook App ID & Secret** (for Facebook/Instagram posting)
+- **Google Client ID & Secret** (for YouTube integration)
+
+### First Steps After Setup:
+1. Register a new account
+2. Connect your social media platforms
+3. Generate your first piece of content
+4. Schedule a test post
+5. Monitor analytics dashboard
+
+## 🎯 Success Criteria
+
+### Technical Goals:
+- ✅ Clean, modern UI that feels premium
+- ✅ AI content generation with 95%+ success rate
+- ✅ Reliable cross-platform posting
+- ✅ Sub-2 second page load times
+- ✅ Mobile-responsive design
+- ✅ Scalable architecture for future growth
+
+### Business Goals:
+- 📈 Generate 20+ high-quality posts per month for your roofing business
+- 💰 Prove ROI through increased leads and customer engagement
+- 🎯 Validate product-market fit for future SaaS expansion
+- 🚀 Build foundation for serving 100+ paying customers
+
+### User Experience Goals:
+- ⚡ Content creation in under 5 minutes
+- 🎨 Professional-quality output that builds trust
+- 📅 Set-and-forget scheduling system
+- 📊 Clear analytics showing business impact
+
+This comprehensive platform will serve as your personal social media powerhouse while being architected for future commercial success. The combination of AI-powered content creation, automated scheduling, and robust analytics will transform your social media presence and validate the concept for broader market expansion.
