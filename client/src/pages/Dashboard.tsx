@@ -156,7 +156,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
           <Button
             variant="ghost"
-            className="text-primary-600 hover:text-primary-700"
+            className="text-blue-600 hover:text-blue-700 font-medium"
             onClick={() => navigate("/analytics")}
           >
             View All
@@ -223,7 +223,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold text-gray-900">Upcoming Content</h2>
           <Button
             variant="ghost"
-            className="text-primary-600 hover:text-primary-700"
+            className="text-blue-600 hover:text-blue-700 font-medium"
             onClick={() => navigate("/calendar")}
           >
             <i className="fas fa-calendar-alt mr-1"></i>
@@ -232,9 +232,16 @@ export default function Dashboard() {
         </div>
 
         {!scheduledPosts || (scheduledPosts as any[]).length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <i className="fas fa-calendar-times text-4xl mb-4 text-gray-300"></i>
-            <p>No scheduled posts. Start planning your content calendar!</p>
+          <div className="text-center py-8">
+            <i className="fas fa-calendar-times text-4xl mb-4 text-gray-400"></i>
+            <p className="text-gray-600 mb-4 text-lg">No scheduled posts. Start planning your content calendar!</p>
+            <Button
+              onClick={() => navigate("/calendar")}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md"
+            >
+              <i className="fas fa-calendar-plus mr-2"></i>
+              Schedule Content
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -248,10 +255,10 @@ export default function Dashboard() {
                     {new Date(post.scheduledTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <div className="bg-warning/10 rounded-lg p-3">
+                <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
                   <div className="flex items-center space-x-2 mb-1">
-                    <div className="w-2 h-2 bg-warning rounded-full"></div>
-                    <span className="text-xs font-medium text-warning">Scheduled</span>
+                    <div className="w-2 h-2 bg-orange-600 rounded-full"></div>
+                    <span className="text-xs font-medium text-orange-600">Scheduled</span>
                   </div>
                   <p className="text-sm text-gray-900 font-medium">
                     {post.title || post.content?.substring(0, 40) + "..."}

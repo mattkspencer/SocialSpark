@@ -115,6 +115,11 @@ Preferred communication style: Simple, everyday language.
 - **Database Migrations**: Drizzle Kit for schema changes and version control
 
 ### Recent Changes
+- **2025-01-27**: Fixed "View Calendar" button visibility and other link button contrast issues  
+  - Changed "View Calendar" and "View All" buttons from invisible primary colors to visible blue text
+  - Enhanced empty state sections with clear call-to-action buttons
+  - Fixed scheduled post status indicators to use standard orange colors instead of custom warning colors
+  - All link-style buttons now use consistent blue-600/blue-700 color scheme for optimal visibility
 - **2025-01-27**: Fixed dashboard color contrast and visibility issues
   - Enhanced welcome message with stronger blue gradient background and white text
   - Improved button contrast with white backgrounds and dark text for better readability

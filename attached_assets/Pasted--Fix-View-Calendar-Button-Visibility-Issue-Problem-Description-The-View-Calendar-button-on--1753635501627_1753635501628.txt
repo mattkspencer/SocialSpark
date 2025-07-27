@@ -1,0 +1,147 @@
+# Fix "View Calendar" Button Visibility Issue
+
+## Problem Description
+The "View Calendar" button on the dashboard has white text on a white/light background, making it invisible when not hovering. The button only becomes readable on hover, which is poor UX.
+
+## Solution: Fix Button Color Scheme
+
+### Locate and Fix the Button
+Find the "View Calendar" button in the Dashboard component and fix its color scheme:
+
+```typescript
+// In client/src/pages/Dashboard.tsx - Look for the "View Calendar" button
+// It's likely in the "Upcoming Content" section at the bottom
+
+// Current problematic styling (invisible text):
+<Link
+  to="/calendar"
+  className="text-white bg-white ..."  // White text on white background = invisible
+>
+  View Full Calendar
+</Link>
+
+// Fix it to:
+<Link
+  to="/calendar"
+  className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors underline"
+>
+  View Full Calendar
+</Link>
+```
+
+### Complete Fix for Dashboard Component
+Update the Dashboard component to fix all similar button visibility issues:
+
+```typescript
+// In client/src/pages/Dashboard.tsx - Fix the "Upcoming Content" section:
+
+{/* Upcoming Content Section - Fix button visibility */}
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-900">Upcoming Content</h2>
+    <Link
+      to="/calendar"
+      className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+    >
+      View Full Calendar
+    </Link>
+  </div>
+  <div className="text-center py-8">
+    <div className="text-gray-400 mb-4">
+      <Calendar className="h-12 w-12 mx-auto" />
+    </div>
+    <p className="text-gray-600 mb-4">No scheduled content yet.</p>
+    <Link
+      to="/calendar"
+      className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+    >
+      Schedule Content
+    </Link>
+  </div>
+</div>
+```
+
+### Also Check Recent Activity Section
+There might be a similar issue with the "View All" button:
+
+```typescript
+// In the "Recent Activity" section - ensure proper visibility:
+<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+    <Link
+      to="/analytics"
+      className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
+    >
+      View All
+    </Link>
+  </div>
+  {/* Rest of content */}
+</div>
+```
+
+## Standard Button Color Patterns
+
+### For Link-Style Buttons (like "View Calendar"):
+```css
+/* Blue text links */
+text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors
+
+/* With underline if needed */
+text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors underline
+```
+
+### For Primary Action Buttons:
+```css
+/* Blue background buttons */
+bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors
+
+/* White background buttons with blue text */
+bg-white hover:bg-gray-50 text-blue-600 border border-gray-300 px-4 py-2 rounded-md text-sm font-medium transition-colors
+```
+
+### For Secondary Action Buttons:
+```css
+/* Gray background buttons */
+bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors
+```
+
+## Quick Fix Steps
+
+1. **Find the Dashboard component** (`client/src/pages/Dashboard.tsx`)
+2. **Locate the "View Calendar" button** (likely in the "Upcoming Content" section)
+3. **Replace the className** with proper blue text styling
+4. **Check for other similar buttons** that might have the same issue
+5. **Test all buttons** to ensure they're visible both on hover and when not hovered
+
+## Expected Result
+
+After the fix:
+✅ **"View Calendar" button visible** - Blue text that's always readable
+✅ **Proper hover states** - Darker blue on hover for clear feedback  
+✅ **Consistent styling** - Matches other link-style buttons in the app
+✅ **Good contrast** - Text clearly visible against white card backgrounds
+
+## Alternative Styling Options
+
+If you prefer a more prominent button style:
+
+```typescript
+// Option 1: Outlined button
+<Link
+  to="/calendar"
+  className="inline-flex items-center px-3 py-1 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded text-sm font-medium transition-colors"
+>
+  View Full Calendar
+</Link>
+
+// Option 2: Solid button (if you want it more prominent)
+<Link
+  to="/calendar"
+  className="inline-flex items-center px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors"
+>
+  View Full Calendar
+</Link>
+```
+
+The key is ensuring the text color has proper contrast against the background at all times, not just on hover.
